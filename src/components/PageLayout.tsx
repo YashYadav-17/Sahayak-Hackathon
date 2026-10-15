@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { VoiceAssistant } from './VoiceAssistant';
 
 export const PageLayout: React.FC = () => {
   return (
@@ -11,6 +12,8 @@ export const PageLayout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
+      {/* Global Multilingual Voice Help Assistant */}
+      <VoiceAssistant />
     </div>
   );
 };

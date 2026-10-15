@@ -22,6 +22,7 @@ import {
   Users,
   Eye,
   Info,
+  Mic,
 } from 'lucide-react';
 import { SAMPLE_JOBS } from '../data/sampleJobs';
 import type { TradeCategory, DurationFilter } from '../types/job';
@@ -67,6 +68,57 @@ export const WorkPage: React.FC = () => {
   const [isReporting, setIsReporting] = useState(false);
   const [reportReason, setReportReason] = useState<string>('work.job.reportReason1');
   const [reportSubmitted, setReportSubmitted] = useState(false);
+
+  // Voice Search State
+  const [isListeningSearch, setIsListeningSearch] = useState(false);
+
+  const toggleSearchSpeech = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    interface SimpleSpeechEvent {
+      results: { [index: number]: { [index: number]: { transcript: string } } };
+    }
+    interface SimpleSpeechInstance {
+      continuous: boolean;
+      interimResults: boolean;
+      lang: string;
+      start: () => void;
+      onstart: (() => void) | null;
+      onend: (() => void) | null;
+      onerror: (() => void) | null;
+      onresult: ((event: SimpleSpeechEvent) => void) | null;
+    }
+
+    const SpeechRec =
+      (window as unknown as { SpeechRecognition?: new () => SimpleSpeechInstance }).SpeechRecognition ||
+      (window as unknown as { webkitSpeechRecognition?: new () => SimpleSpeechInstance }).webkitSpeechRecognition;
+
+    if (!SpeechRec) {
+      alert(language === 'hi' ? 'इस ब्राउज़र में स्पीच रिकग्निशन उपलब्ध नहीं है।' : language === 'mr' ? 'या ब्राउझरमध्ये स्पीच रेकग्निशन उपलब्ध नाही.' : 'Speech recognition is not supported in this browser.');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = language === 'hi' ? 'hi-IN' : language === 'mr' ? 'mr-IN' : 'en-IN';
+
+      recognition.onstart = () => setIsListeningSearch(true);
+      recognition.onend = () => setIsListeningSearch(false);
+      recognition.onerror = () => setIsListeningSearch(false);
+
+      recognition.onresult = (event: SimpleSpeechEvent) => {
+        const transcript = event.results[0]?.[0]?.transcript?.trim();
+        if (transcript) {
+          setSearchQuery(transcript);
+        }
+      };
+
+      recognition.start();
+    } catch {
+      setIsListeningSearch(false);
+    }
+  }, [language]);
 
   // Localized Jobs list
   const localizedJobs = useMemo(() => {
@@ -287,6 +339,21 @@ export const WorkPage: React.FC = () => {
                 <X className="w-4 h-4" />
               </button>
             )}
+
+            {/* Speech-to-text mic for search input */}
+            <button
+              type="button"
+              onClick={toggleSearchSpeech}
+              title={isListeningSearch ? 'Listening...' : 'Voice Search'}
+              className={`p-1.5 rounded-lg transition-all ${
+                isListeningSearch
+                  ? 'bg-red-500 text-white animate-pulse'
+                  : 'text-slate-400 hover:text-[#0F766E] hover:bg-slate-200/50'
+              }`}
+              aria-label="Voice Search"
+            >
+              <Mic className="w-4 h-4" />
+            </button>
           </div>
 
           {/* City / Locality Selector */}

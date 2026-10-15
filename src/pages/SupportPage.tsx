@@ -19,10 +19,18 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const DOC_CHECKLIST_STORAGE_KEY = 'sahayak_document_checklist';
 
+type LocalizedField = { en: string; hi: string; mr?: string };
+
+const getLocalizedText = (field: LocalizedField, lang: string): string => {
+  if (lang === 'mr' && field.mr) return field.mr;
+  if (lang === 'hi' || lang === 'mr') return field.hi;
+  return field.en;
+};
+
 interface SafetyCheckItem {
   id: string;
-  label: { en: string; hi: string };
-  detail: { en: string; hi: string };
+  label: LocalizedField;
+  detail: LocalizedField;
 }
 
 const JOB_SAFETY_CHECKS: SafetyCheckItem[] = [
@@ -96,10 +104,10 @@ const JOB_SAFETY_CHECKS: SafetyCheckItem[] = [
 
 interface ScamWarning {
   id: string;
-  title: { en: string; hi: string };
-  shortDesc: { en: string; hi: string };
-  explanation: { en: string; hi: string };
-  recommendedAction: { en: string; hi: string };
+  title: LocalizedField;
+  shortDesc: LocalizedField;
+  explanation: LocalizedField;
+  recommendedAction: LocalizedField;
 }
 
 const SCAM_WARNINGS: ScamWarning[] = [
@@ -183,9 +191,9 @@ const SCAM_WARNINGS: ScamWarning[] = [
 
 interface DocumentItem {
   id: string;
-  title: { en: string; hi: string };
-  purpose: { en: string; hi: string };
-  guidance: { en: string; hi: string };
+  title: LocalizedField;
+  purpose: LocalizedField;
+  guidance: LocalizedField;
 }
 
 const DOCUMENT_RECORDS: DocumentItem[] = [
@@ -267,11 +275,11 @@ const DOCUMENT_RECORDS: DocumentItem[] = [
 ];
 
 interface OfficialResource {
-  name: { en: string; hi: string };
-  organization: { en: string; hi: string };
+  name: LocalizedField;
+  organization: LocalizedField;
   url: string;
-  description: { en: string; hi: string };
-  badge: { en: string; hi: string };
+  description: LocalizedField;
+  badge: LocalizedField;
 }
 
 const OFFICIAL_RESOURCES: OfficialResource[] = [
@@ -489,8 +497,8 @@ export const SupportPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {JOB_SAFETY_CHECKS.map((item, idx) => {
                 const isChecked = checkedSafety.includes(item.id);
-                const label = item.label[language] || item.label.en;
-                const detail = item.detail[language] || item.detail.en;
+                const label = getLocalizedText(item.label, language);
+                const detail = getLocalizedText(item.detail, language);
 
                 return (
                   <button
@@ -579,10 +587,10 @@ export const SupportPage: React.FC = () => {
               <div className="lg:col-span-8 space-y-3">
                 {SCAM_WARNINGS.map((warning) => {
                   const isOpen = openWarning === warning.id;
-                  const title = warning.title[language] || warning.title.en;
-                  const shortDesc = warning.shortDesc[language] || warning.shortDesc.en;
-                  const explanation = warning.explanation[language] || warning.explanation.en;
-                  const recommendedAction = warning.recommendedAction[language] || warning.recommendedAction.en;
+                  const title = getLocalizedText(warning.title, language);
+                  const shortDesc = getLocalizedText(warning.shortDesc, language);
+                  const explanation = getLocalizedText(warning.explanation, language);
+                  const recommendedAction = getLocalizedText(warning.recommendedAction, language);
 
                   return (
                     <div
@@ -751,9 +759,9 @@ export const SupportPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {DOCUMENT_RECORDS.map((doc) => {
                 const isSelected = checkedDocs.includes(doc.id);
-                const title = doc.title[language] || doc.title.en;
-                const purpose = doc.purpose[language] || doc.purpose.en;
-                const guidance = doc.guidance[language] || doc.guidance.en;
+                const title = getLocalizedText(doc.title, language);
+                const purpose = getLocalizedText(doc.purpose, language);
+                const guidance = getLocalizedText(doc.guidance, language);
 
                 return (
                   <button
@@ -824,10 +832,10 @@ export const SupportPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {OFFICIAL_RESOURCES.map((res) => {
-                const name = res.name[language] || res.name.en;
-                const org = res.organization[language] || res.organization.en;
-                const desc = res.description[language] || res.description.en;
-                const badge = res.badge[language] || res.badge.en;
+                const name = getLocalizedText(res.name, language);
+                const org = getLocalizedText(res.organization, language);
+                const desc = getLocalizedText(res.description, language);
+                const badge = getLocalizedText(res.badge, language);
 
                 return (
                   <div

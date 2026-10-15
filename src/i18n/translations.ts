@@ -2,7 +2,7 @@ import type { Job } from '../types/job';
 import type { WorkerProfile } from '../types/worker';
 import type { Language } from './LanguageContext';
 
-export const TRANSLATIONS: Record<'hi' | 'en', Record<string, string>> = {
+export const TRANSLATIONS: Record<'hi' | 'en' | 'mr', Record<string, string>> = {
   hi: {
     // --- Brand & Shell ---
     'brand.tagline': 'सम्मानजनक काम, उचित मेहनताना',
@@ -297,6 +297,41 @@ export const TRANSLATIONS: Record<'hi' | 'en', Record<string, string>> = {
     'support.emergency.desc': 'कार्यस्थल पर किसी भी शारीरिक खतरे, हिंसा या चिकित्सा आपातकाल में राष्ट्रीय हेल्पलाइन 112 पर कॉल करें।',
     'support.emergency.number': 'राष्ट्रीय हेल्पलाइन: 112',
     'support.disclaimer': 'सहायक (SAHAYAK) एक सूचनात्मक डिजिटल प्रोटोटाइप है। यह कोई कानूनी सहायता फर्म या सरकारी एजेंसी नहीं है। सभी बाहरी लिंक भारत सरकार की आधिकारिक वेबसाइटों के हैं।',
+
+    // --- Voice Assistant ---
+    'voice.btn': 'बोलकर मदद लें',
+    'voice.title': 'सहायक बोलकर मदद',
+    'voice.subtitle': 'बहुभाषी वॉइस व आईवीआर सहायता',
+    'voice.welcome': 'स्वागत है! मैं आज आपकी क्या मदद कर सकता हूँ?',
+    'voice.ivr.prompt': 'कृपया नीचे से कोई विकल्प चुनें या नंबर बोलें:',
+    'voice.ivr.1': '1. ज़रूरी जानकारी प्राप्त करें',
+    'voice.ivr.2': '2. काम और अवसर खोजें (Find Work)',
+    'voice.ivr.3': '3. वेबसाइट का उपयोग कैसे करें',
+    'voice.ivr.4': '4. अक्सर पूछे जाने वाले सवाल (FAQ)',
+    'voice.ivr.5': '5. सहायता और सुरक्षा नियम (Rights & Support)',
+    'voice.ivr.6': '6. भाषा बदलें (Language)',
+    'voice.ivr.7': '7. मुख्य मेनू (Main Menu)',
+    'voice.action.repeat': 'दोबारा सुनें',
+    'voice.action.back': 'पीछे',
+    'voice.action.mainMenu': 'मुख्य मेनू',
+    'voice.action.stop': 'बोलना बंद करें',
+    'voice.action.speak': 'बोलें',
+    'voice.action.listen': 'सुन रहे हैं...',
+    'voice.action.send': 'भेजें',
+    'voice.input.placeholder': 'नंबर या संदेश लिखें या माइक दबाएँ...',
+    'voice.mic.unsupported': 'आपके ब्राउज़र में आवाज़ पहचानना उपलब्ध नहीं है। आप लिखकर उपयोग कर सकते हैं!',
+    'voice.mic.denied': 'माइक्रोफ़ोन की अनुमति नहीं मिली। कृपया ब्राउज़र में अनुमति दें।',
+    'voice.info.title': 'सहायक मंच की मुख्य जानकारी',
+    'voice.info.desc': 'सहायक कारीगरों और काम देने वालों को सीधे जोड़ता है। यहाँ 0% दलाली है, सीधी मजदूरी मिलती है, और काम की शर्तें पहले से तय होती हैं।',
+    'voice.guide.title': 'वेबसाइट उपयोग करने की विधि',
+    'voice.guide.desc': '1. "काम खोजें" में जाकर अपनी कला के अनुसार रोज़गार ढूँढें। 2. "मेरी जानकारी" में जाकर अपना डिजिटल कारीगर कार्ड बनाएँ। 3. "कामगार खोजें" में जाकर कारीगरों की सूची देखें व काम पोस्ट करें।',
+    'voice.faq.title': 'अक्सर पूछे जाने वाले सवाल',
+    'voice.faq.1.q': 'क्या सहायक कोई कमीशन लेता है?',
+    'voice.faq.1.a': 'नहीं, सहायक ₹0 कमीशन लेता है। कामगार को अपनी पूरी 100% मजदूरी सीधे मिलती है।',
+    'voice.faq.2.q': 'मजदूरी कैसे मिलती है?',
+    'voice.faq.2.a': 'काम समाप्त होने पर काम देने वाले से सीधे नकद, UPI या बैंक खाते में भुगतान लिया जाता है।',
+    'voice.faq.3.q': 'धोखाधड़ी से कैसे बचें?',
+    'voice.faq.3.a': 'काम शुरू करने से पहले कभी रजिस्ट्रेशन फीस न दें और न ही मूल पहचान पत्र किसी को सौंपें।',
 
     // --- Not Found & Motion Lab ---
     'notFound.title': '404 — पृष्ठ नहीं मिला',
@@ -602,6 +637,41 @@ export const TRANSLATIONS: Record<'hi' | 'en', Record<string, string>> = {
     'support.emergency.number': 'National Helpline: 112',
     'support.disclaimer': 'Sahayak (सहायक) is an informational digital prototype and is not a government agency, legal aid clinic, or law firm. All listed external links lead to official Government of India websites.',
 
+    // --- Voice Assistant ---
+    'voice.btn': 'Voice Help',
+    'voice.title': 'Sahayak Voice Help',
+    'voice.subtitle': 'Multilingual Voice & IVR Assistance',
+    'voice.welcome': 'Welcome! How can I help you today?',
+    'voice.ivr.prompt': 'Please select an option or speak a number:',
+    'voice.ivr.1': '1. Find information',
+    'voice.ivr.2': '2. Explore jobs and opportunities',
+    'voice.ivr.3': '3. Get help using the website',
+    'voice.ivr.4': '4. Frequently asked questions',
+    'voice.ivr.5': '5. Get support & rights',
+    'voice.ivr.6': '6. Change language',
+    'voice.ivr.7': '7. Main menu',
+    'voice.action.repeat': 'Repeat menu',
+    'voice.action.back': 'Back',
+    'voice.action.mainMenu': 'Main Menu',
+    'voice.action.stop': 'Stop Speaking',
+    'voice.action.speak': 'Speak',
+    'voice.action.listen': 'Listening...',
+    'voice.action.send': 'Send',
+    'voice.input.placeholder': 'Type a number, message, or use mic...',
+    'voice.mic.unsupported': 'Speech recognition is not supported in this browser. Normal typing works!',
+    'voice.mic.denied': 'Microphone permission was denied. Please allow microphone access in settings.',
+    'voice.info.title': 'About Sahayak Platform',
+    'voice.info.desc': 'Sahayak directly connects skilled informal craftspeople with households and contractors. We charge 0% commission, and all wage terms are clear before work starts.',
+    'voice.guide.title': 'How to Use the Website',
+    'voice.guide.desc': '1. Find Work: Browse daily shifts and contracts with transparent rates. 2. My Profile: Build your portable artisan skill card. 3. Hire Workers: Browse skilled craftspeople or post job requirements.',
+    'voice.faq.title': 'Frequently Asked Questions',
+    'voice.faq.1.q': 'Does Sahayak charge any commission or fees?',
+    'voice.faq.1.a': 'No. Workers keep 100% of their earned daily wages. Sahayak is completely free with zero middleman deductions.',
+    'voice.faq.2.q': 'How does payment work?',
+    'voice.faq.2.a': 'Payments are made directly between worker and employer via cash, UPI, or bank transfer upon job completion.',
+    'voice.faq.3.q': 'How do I avoid fraudulent offers?',
+    'voice.faq.3.a': 'Never pay upfront registration or gate fees, and never surrender original identity cards or bank passbooks.',
+
     // --- Not Found & Motion Lab ---
     'notFound.title': '404 — Page Not Found',
     'notFound.desc': 'The page you are looking for does not exist.',
@@ -609,6 +679,149 @@ export const TRANSLATIONS: Record<'hi' | 'en', Record<string, string>> = {
     'motionLab.toolbar': 'MOTION LAB // SEQUENCE PREVIEW',
     'motionLab.return': 'Return to Live Site',
     'motionLab.lockedPalette': 'LOCKED PALETTE:',
+  },
+
+  mr: {
+    // --- Brand & Shell ---
+    'brand.tagline': 'सन्मानपूर्वक काम, योग्य मोबदला',
+    'nav.home': 'मुख्यपृष्ठ',
+    'nav.work': 'काम शोधा',
+    'nav.hire': 'कामगार शोधा',
+    'nav.profile': 'माझी माहिती',
+    'nav.support': 'मदत आणि हक्क',
+    'nav.cta.findWork': 'काम शोधा',
+    'nav.cta.postJob': 'काम द्या',
+    'nav.mobile.subtitle': 'आर्टेमिस 2026 • निष्पक्ष रोजगार मंच',
+    'nav.openMenu': 'मेनू उघडा',
+    'nav.closeMenu': 'मेनू बंद करा',
+
+    // --- Footer ---
+    'footer.pledge1.title': 'थेट काम आणि पूर्ण कमाई',
+    'footer.pledge1.desc': 'कामगाराला त्याची पूर्ण ठरलेली मजुरी मिळते, कोणत्याही कपातीशिवाय.',
+    'footer.pledge2.title': 'स्पष्ट आणि पारदर्शक अटी',
+    'footer.pledge2.desc': 'काम सुरू करण्यापूर्वी पक्की मजुरी, वेळ आणि कामाची जागा निश्चित.',
+    'footer.pledge3.title': 'कामगार मदत आणि हक्क',
+    'footer.pledge3.link': 'सुरक्षा आणि मदत नियम पहा',
+    'footer.about': 'सहायक हा एक खुला डिजिटल मंच आहे जो कुशल कारागीर आणि काम देणाऱ्यांना थेट जोडतो — कोणत्याही दलालाच्या कमिशनशिवाय.',
+    'footer.hackathon': 'आर्टेमिस 2026 हॅकाथॉनसाठी तयार • कामगारांच्या सन्मानाचा मंच',
+    'footer.navTitle': 'नेव्हिगेशन',
+    'footer.principlesTitle': 'निष्पक्ष कामाचे नियम',
+    'footer.principlesDesc': 'सरकारी किमान वेतन आणि कौशल्याच्या आधारे पारदर्शक दर, ज्यामुळे दोन्ही बाजूंमध्ये थेट विश्वास निर्माण होतो.',
+    'footer.principlesNote': 'माहिती: सरकारी वेतन दर, तक्रार निवारण आणि सुरक्षा सल्ला आमच्या मदत पानावर उपलब्ध आहेत.',
+    'footer.copyright': '© 2026 SAHAYAK (सहायक) • देशभरातील कष्टकऱ्यांना समर्पित.',
+
+    // --- Common ---
+    'common.backHome': 'मुख्यपृष्ठावर जा',
+    'common.backDirectory': 'कामगार यादीवर जा',
+    'common.day': 'दिवस',
+    'common.job': 'काम',
+    'common.perDay': 'दररोज',
+    'common.perJob': 'संपूर्ण कामाचे',
+    'common.years': 'वर्षे',
+    'common.experience': 'अनुभव',
+    'common.skills': 'कौशल्ये / काम',
+    'common.location': 'ठिकाण',
+    'common.availability': 'उपलब्धता',
+    'common.rate': 'मोबदला / मजुरी',
+    'common.demoNotice': 'हे केवळ प्रात्यक्षिकासाठी (डेमो) आहे.',
+    'common.close': 'बंद करा',
+    'common.reset': 'रीसेट / पुसून टाका',
+    'common.search': 'शोधा',
+    'common.filterAll': 'सर्व',
+    'common.today': 'आज उपलब्ध',
+    'common.thisWeek': 'या आठवड्यात उपलब्ध',
+    'common.notAvailable': 'सध्या व्यस्त',
+    'common.save': 'सेव्ह करा',
+    'common.saved': 'सेव्ह केले',
+    'common.edit': 'बदल करा',
+    'common.delete': 'हटवा',
+    'common.confirm': 'निश्चित करा',
+    'common.cancel': 'रद्द करा',
+
+    // --- Voice Assistant ---
+    'voice.btn': 'बोलून मदत घ्या',
+    'voice.title': 'सहायक बोलून मदत',
+    'voice.subtitle': 'बहुभाषिक व्हॉइस व आयव्हीआर मदत',
+    'voice.welcome': 'स्वागत आहे! मी आज तुम्हाला कशी मदत करू शकेन?',
+    'voice.ivr.prompt': 'कृपया खालीलपैकी पर्याय निवडा किंवा नंबर बोला:',
+    'voice.ivr.1': '1. महत्त्वाची माहिती मिळवा',
+    'voice.ivr.2': '2. काम आणि संधी शोधा (Find Work)',
+    'voice.ivr.3': '3. संकेतस्थळ कसे वापरावे',
+    'voice.ivr.4': '4. वारंवार विचारले जाणारे प्रश्न (FAQ)',
+    'voice.ivr.5': '5. मदत आणि सुरक्षितता नियम (Rights & Support)',
+    'voice.ivr.6': '6. भाषा बदला (Language)',
+    'voice.ivr.7': '7. मुख्य मेनू (Main Menu)',
+    'voice.action.repeat': 'पुन्हा ऐका',
+    'voice.action.back': 'मागे',
+    'voice.action.mainMenu': 'मुख्य मेनू',
+    'voice.action.stop': 'बोलणे थांबवा',
+    'voice.action.speak': 'बोला',
+    'voice.action.listen': 'ऐकत आहोत...',
+    'voice.action.send': 'पाठवा',
+    'voice.input.placeholder': 'नंबर किंवा संदेश लिहा किंवा माइक वापरा...',
+    'voice.mic.unsupported': 'आपल्या ब्राउझरमध्ये व्हॉइस ओळख उपलब्ध नाही. आपण टाईप करून वापरू शकता!',
+    'voice.mic.denied': 'मायक्रोफोन परवानगी नाकारली गेली. कृपया ब्राउझरमध्ये परवानगी द्या.',
+    'voice.info.title': 'सहायक मंचाविषयी महत्त्वाची माहिती',
+    'voice.info.desc': 'सहायक हा कामगार आणि काम देणाऱ्यांना थेट जोडणारा मंच आहे. येथे शून्य टक्के दलाली असून सर्व ठरलेली मजुरी थेट कामगाराला मिळते.',
+    'voice.guide.title': 'संकेतस्थळ कसे वापरावे',
+    'voice.guide.desc': '1. "काम शोधा": आपल्या कौशल्यानुसार रोजंदारी किंवा ठेका काम शोधा. 2. "माझी माहिती": आपले डिजिटल कारागीर कार्ड तयार करा. 3. "कामगार शोधा": कुशल कामगारांची यादी पहा किंवा नवीन काम पोस्ट करा.',
+    'voice.faq.title': 'वारंवार विचारले जाणारे प्रश्न',
+    'voice.faq.1.q': 'सहायक कोणते कमिशन घेते का?',
+    'voice.faq.1.a': 'नाही! सहायक शून्य रुपये कमिशन घेते. कामगाराला त्याची संपूर्ण मजुरी थेट मिळते.',
+    'voice.faq.2.q': 'मजुरी कशी दिली जाते?',
+    'voice.faq.2.a': 'काम संपल्यावर मालकाकडून थेट रोख, यूपीआय (UPI) किंवा बँक खात्यात दिली जाते.',
+    'voice.faq.3.q': 'फसवणुकीपासून स्वतःला कसे वाचवावे?',
+    'voice.faq.3.a': 'काम सुरू करण्यापूर्वी कोणालाही आगाऊ नोंदणी फी देऊ नका आणि मूळ ओळखपत्रे कोणाकडेही ठेवू नका.',
+
+    // --- Homepage & Hero ---
+    'home.hero.badge': 'आर्टेमिस 2026 पुढाकार • निष्पक्ष रोजगार नेटवर्क',
+    'home.hero.title1': 'कुशल हात.',
+    'home.hero.title2': 'सन्मानपूर्वक कामाचे हक्कदार.',
+    'home.hero.sub': 'थेट संपर्क • दलालांचे कोणतेही कमिशन नाही',
+    'home.hero.scene5.title1': 'कमी प्रतीक्षा. ',
+    'home.hero.scene5.title2': 'अधिक संधी.',
+    'home.hero.scene5.desc': 'सहायक कुशल कष्टकऱ्यांना थेट विश्वासू स्थानिक कामाशी जोडतो. दलालांचे कमिशन नाही. पूर्ण सन्मान.',
+    'home.hero.scene5.btnFind': 'काम शोधा',
+    'home.hero.scene5.btnHire': 'कामगार शोधा',
+
+    // --- Work Page ---
+    'work.hero.title': 'थेट रोजंदारी व ठेका काम शोधा',
+    'work.hero.subtitle': 'पारदर्शक रोजंदारी दरांसह गवंडी, सुतार, प्लंबर, इलेक्ट्रिशियन आणि रंगकाम शोधा. थेट काम मिळवा.',
+    'work.search.placeholder': 'काम, कौशल्य किंवा भाग शोधा (उदा. सुतार, कोथरूड, प्लंबर)...',
+    'work.filters.trade': 'कामाचा प्रकार',
+    'work.filters.duration': 'कालावधी',
+    'work.filters.allTrades': 'सर्व कामे',
+    'work.filters.allDurations': 'सर्व कालावधी',
+    'work.filters.daily': 'रोजंदारी',
+    'work.filters.multiDay': 'काही दिवसांचे काम',
+    'work.results.count': 'कामे उपलब्ध आहेत',
+    'work.results.emptyTitle': 'कोणतेही काम सापडले नाही',
+    'work.results.emptyDesc': 'कृपया इतर शब्द शोधून पहा किंवा फिल्टर पुसून टाका.',
+    'work.results.resetBtn': 'सर्व फिल्टर पुसून टाका',
+    'work.job.featured': 'विशेष काम',
+    'work.job.viewDetails': 'तपशील पहा',
+    'work.job.saved': 'सेव्ह केले',
+    'work.job.save': 'सेव्ह करा',
+    'work.job.hours': 'वेळ',
+
+    // --- Support Page ---
+    'support.hero.badge': 'कामगार सुरक्षा आणि हक्क',
+    'support.hero.title': 'कामगार हक्क, सुरक्षा आणि पडताळणी',
+    'support.hero.subtitle': 'रोजंदारी आणि कंत्राटी कामगारांसाठी स्पष्ट मार्गदर्शन. काम स्वीकारण्यापूर्वी तपासा, संशयास्पद कामांपासून सावध राहा, आणि सरकारी पोर्टल पहा.',
+    'support.printBtn': 'मार्गदर्शिका प्रिंट करा',
+    'support.secA.title': 'काम स्वीकारण्यापूर्वी या गोष्टी तपासा',
+    'support.secA.desc': 'कामाच्या ठिकाणी जाण्यापूर्वी या 6 महत्त्वाच्या मुद्द्यांची खात्री करा.',
+    'support.secA.confirmed': 'पडताळणी झाली',
+    'support.secA.allVerified': 'सर्व मुद्दे तपासले गेले आहेत! आपण कामासाठी सज्ज आहात.',
+    'support.secA.tip': 'सल्ला: काम देणारा मजुरी किंवा वेळ स्पष्ट सांगत नसेल, तर सावधगिरी बाळगा.',
+
+    // --- Not Found & Motion Lab ---
+    'notFound.title': '404 — पृष्ठ सापडले नाही',
+    'notFound.desc': 'आपण शोधत असलेले पृष्ठ उपलब्ध नाही.',
+    'notFound.btn': 'मुख्यपृष्ठावर परत जा',
+    'motionLab.toolbar': 'मोशन लॅब // पूर्वावलोकन',
+    'motionLab.return': 'थेट साइटवर परत जा',
+    'motionLab.lockedPalette': 'मान्यताप्राप्त रंग:',
   },
 };
 
@@ -839,7 +1052,7 @@ const HINDI_WORKER_OVERRIDES: Record<string, Partial<WorkerProfile>> = {
 };
 
 export function getLocalizedJob(job: Job, language: Language): Job {
-  if (language === 'hi' && HINDI_JOB_OVERRIDES[job.id]) {
+  if ((language === 'hi' || language === 'mr') && HINDI_JOB_OVERRIDES[job.id]) {
     return {
       ...job,
       ...HINDI_JOB_OVERRIDES[job.id],
@@ -849,7 +1062,7 @@ export function getLocalizedJob(job: Job, language: Language): Job {
 }
 
 export function getLocalizedWorker(worker: WorkerProfile, language: Language): WorkerProfile {
-  if (language === 'hi' && HINDI_WORKER_OVERRIDES[worker.id]) {
+  if ((language === 'hi' || language === 'mr') && HINDI_WORKER_OVERRIDES[worker.id]) {
     return {
       ...worker,
       ...HINDI_WORKER_OVERRIDES[worker.id],

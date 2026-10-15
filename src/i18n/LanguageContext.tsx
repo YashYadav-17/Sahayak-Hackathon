@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { TRANSLATIONS } from './translations';
 
-export type Language = 'hi' | 'en';
+export type Language = 'hi' | 'en' | 'mr';
 
 export interface LanguageContextType {
   language: Language;
@@ -17,7 +17,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === 'en' || stored === 'hi') {
+      if (stored === 'en' || stored === 'hi' || stored === 'mr') {
         return stored;
       }
     } catch {
@@ -28,7 +28,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const setLanguage = (newLang: Language) => {
-    if (newLang !== 'hi' && newLang !== 'en') return;
+    if (newLang !== 'hi' && newLang !== 'en' && newLang !== 'mr') return;
     setLanguageState(newLang);
     try {
       localStorage.setItem(STORAGE_KEY, newLang);
@@ -43,6 +43,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       document.documentElement.lang = language;
       if (language === 'hi') {
         document.title = 'SAHAYAK (सहायक) — सम्मानजनक काम, उचित मेहनताना';
+      } else if (language === 'mr') {
+        document.title = 'SAHAYAK (सहायक) — सन्मानपूर्वक काम, योग्य मोबदला';
       } else {
         document.title = 'SAHAYAK (सहायक) — Dignified Work, Fair Pay';
       }
@@ -56,7 +58,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (langDict && key in langDict) {
       return langDict[key];
     }
-    // Fallback to English dictionary if key is missing in Hindi
+    // Fallback to Hindi, then English dictionary
+    const hiDict = TRANSLATIONS.hi;
+    if (hiDict && key in hiDict) {
+      return hiDict[key];
+    }
     const enDict = TRANSLATIONS.en;
     if (enDict && key in enDict) {
       return enDict[key];
