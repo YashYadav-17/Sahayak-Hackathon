@@ -6,18 +6,16 @@ import {
   Volume2,
   VolumeX,
   X,
-  RotateCcw,
-  ArrowLeft,
-  Menu,
   Send,
-  HelpCircle,
-  Briefcase,
-  ShieldCheck,
   Languages,
   Info,
-  ChevronRight,
+  PhoneCall,
+  Sparkles,
+  ArrowLeft,
+  RotateCcw,
+  Menu,
 } from 'lucide-react';
-import { useLanguage, type Language } from '../i18n/LanguageContext';
+import { useLanguage } from '../i18n/LanguageContext';
 
 // Safe interface for Web Speech API
 interface SpeechRecognitionEvent {
@@ -48,6 +46,28 @@ interface SpeechRecognitionInstance {
 
 type MenuState = 'main' | 'info' | 'help' | 'faq' | 'language';
 
+interface KeypadButtonConfig {
+  key: string;
+  subTextKey: string;
+  icon?: string;
+  actionType: 'info' | 'work' | 'help' | 'faq' | 'support' | 'language' | 'profile' | 'hire' | 'stop' | 'back' | 'repeat' | 'main';
+}
+
+const KEYPAD_BUTTONS: KeypadButtonConfig[] = [
+  { key: '1', subTextKey: 'keypad.1.label', actionType: 'info' },
+  { key: '2', subTextKey: 'keypad.2.label', actionType: 'work' },
+  { key: '3', subTextKey: 'keypad.3.label', actionType: 'help' },
+  { key: '4', subTextKey: 'keypad.4.label', actionType: 'faq' },
+  { key: '5', subTextKey: 'keypad.5.label', actionType: 'support' },
+  { key: '6', subTextKey: 'keypad.6.label', actionType: 'language' },
+  { key: '7', subTextKey: 'keypad.7.label', actionType: 'profile' },
+  { key: '8', subTextKey: 'keypad.8.label', actionType: 'hire' },
+  { key: '9', subTextKey: 'keypad.9.label', actionType: 'stop' },
+  { key: '*', subTextKey: 'keypad.star.label', actionType: 'back' },
+  { key: '0', subTextKey: 'keypad.0.label', actionType: 'repeat' },
+  { key: '#', subTextKey: 'keypad.hash.label', actionType: 'main' },
+];
+
 export const VoiceAssistant: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
@@ -57,9 +77,11 @@ export const VoiceAssistant: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeKey, setActiveKey] = useState<string | null>(null);
+  const [lastActionMessage, setLastActionMessage] = useState<string>('');
   const [recognitionError, setRecognitionError] = useState<string | null>(null);
 
-  // Initialize Speech Support safely without state-in-effect
+  // Check speech recognition capability once on client without setState in effect
   const [isSpeechSupported] = useState(() => {
     if (typeof window === 'undefined') return true;
     return Boolean(
@@ -70,6 +92,7 @@ export const VoiceAssistant: React.FC = () => {
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const lastSpokenRef = useRef<string>('');
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Cancel any ongoing speech synthesis
   const stopSpeaking = useCallback(() => {
@@ -91,7 +114,7 @@ export const VoiceAssistant: React.FC = () => {
         utterance.lang = langCode;
         utterance.rate = 0.95;
 
-        // Try to match appropriate voice if available
+        // Try to match preferred voice
         const voices = window.speechSynthesis.getVoices();
         const preferred = voices.find(
           (v) =>
@@ -115,157 +138,213 @@ export const VoiceAssistant: React.FC = () => {
     [language]
   );
 
-  // Process text or voice input
-  const handleProcessCommand = useCallback(
-    (rawText: string) => {
-      const text = rawText.toLowerCase().trim();
+  // Navigate safely without audio overlap
+  const handleNavigate = useCallback(
+    (path: string, confirmationMsg: string) => {
+      setIsNavigating(true);
+      setLastActionMessage(confirmationMsg);
+      speakText(confirmationMsg);
 
-      // Check for numbers or spoken numerals
-      if (
-        text === '1' ||
-        text.includes('one') ||
-        text.includes('एक') ||
-        text.includes('info') ||
-        text.includes('जानकारी') ||
-        text.includes('माहिती')
-      ) {
-        setMenuState('info');
-        return;
-      }
-      if (
-        text === '2' ||
-        text.includes('two') ||
-        text.includes('दो') ||
-        text.includes('दोन') ||
-        text.includes('job') ||
-        text.includes('work') ||
-        text.includes('काम')
-      ) {
-        speakText(
-          language === 'hi'
-            ? 'काम खोजें पृष्ठ पर ले जा रहे हैं...'
-            : language === 'mr'
-            ? 'काम शोधा पानावर नेत आहोत...'
-            : 'Navigating to Find Work page...'
-        );
-        setTimeout(() => {
-          setIsOpen(false);
-          navigate('/work');
-        }, 900);
-        return;
-      }
-      if (
-        text === '3' ||
-        text.includes('three') ||
-        text.includes('तीन') ||
-        text.includes('help') ||
-        text.includes('guide') ||
-        text.includes('वेबसाइट') ||
-        text.includes('संकेतस्थळ')
-      ) {
-        setMenuState('help');
-        return;
-      }
-      if (
-        text === '4' ||
-        text.includes('four') ||
-        text.includes('चार') ||
-        text.includes('faq') ||
-        text.includes('सवाल') ||
-        text.includes('प्रश्न')
-      ) {
-        setMenuState('faq');
-        return;
-      }
-      if (
-        text === '5' ||
-        text.includes('five') ||
-        text.includes('पाँच') ||
-        text.includes('पाच') ||
-        text.includes('support') ||
-        text.includes('सुरक्षा') ||
-        text.includes('मदत') ||
-        text.includes('अधिकार')
-      ) {
-        speakText(
-          language === 'hi'
-            ? 'सहायता और सुरक्षा पृष्ठ पर ले जा रहे हैं...'
-            : language === 'mr'
-            ? 'मदत आणि हक्क पानावर नेत आहोत...'
-            : 'Navigating to Rights and Support page...'
-        );
-        setTimeout(() => {
-          setIsOpen(false);
-          navigate('/support');
-        }, 900);
-        return;
-      }
-      if (
-        text === '6' ||
-        text.includes('six') ||
-        text.includes('छह') ||
-        text.includes('सहा') ||
-        text.includes('language') ||
-        text.includes('भाषा')
-      ) {
-        setMenuState('language');
-        return;
-      }
-      if (text === '7' || text.includes('seven') || text.includes('सात') || text.includes('main') || text.includes('मुख्य')) {
-        setMenuState('main');
-        return;
-      }
-
-      // Direct language switching via voice
-      if (text.includes('hindi') || text.includes('हिंदी') || text.includes('हिन्दी')) {
-        setLanguage('hi');
-        setMenuState('main');
-        return;
-      }
-      if (text.includes('marathi') || text.includes('मराठी')) {
-        setLanguage('mr');
-        setMenuState('main');
-        return;
-      }
-      if (text.includes('english') || text.includes('अंग्रेजी') || text.includes('इंग्रजी')) {
-        setLanguage('en');
-        setMenuState('main');
-        return;
-      }
-
-      // Action controls
-      if (text.includes('repeat') || text.includes('दोबारा') || text.includes('पुन्हा')) {
-        lastSpokenRef.current = '';
-        setMenuState('main');
-        return;
-      }
-      if (text.includes('back') || text.includes('पीछे') || text.includes('मागे')) {
-        setMenuState('main');
-        return;
-      }
-      if (text.includes('stop') || text.includes('बंद') || text.includes('थांबवा')) {
-        stopSpeaking();
-        return;
-      }
-
-      // Fallback if not recognized
-      const notUnderstood =
-        language === 'hi'
-          ? 'माफ़ कीजिए, मैं समझ नहीं पाया। कृपया 1 से 7 में से कोई विकल्प चुनें।'
-          : language === 'mr'
-          ? 'माफ करा, मला समजले नाही. कृपया 1 ते 7 मधील एक पर्याय निवडा.'
-          : 'Sorry, I did not understand that. Please select an option between 1 and 7.';
-      speakText(notUnderstood);
+      setTimeout(() => {
+        setIsOpen(false);
+        setIsNavigating(false);
+        navigate(path);
+      }, 800);
     },
-    [language, navigate, setLanguage, speakText, stopSpeaking]
+    [navigate, speakText]
   );
 
-  const commandHandlerRef = useRef(handleProcessCommand);
-  useEffect(() => {
-    commandHandlerRef.current = handleProcessCommand;
-  }, [handleProcessCommand]);
+  // Core Keypad Handler
+  const handleKeypadPress = useCallback(
+    (keyVal: string) => {
+      // Tactile visual flash
+      setActiveKey(keyVal);
+      setTimeout(() => setActiveKey(null), 300);
 
-  // Initialize Speech Recognition once on client
+      switch (keyVal) {
+        case '1':
+          setMenuState('info');
+          setLastActionMessage(t('voice.info.title'));
+          break;
+
+        case '2':
+          handleNavigate(
+            '/work',
+            language === 'hi'
+              ? 'काम खोजें पृष्ठ पर ले जा रहे हैं...'
+              : language === 'mr'
+              ? 'काम शोधा पानावर नेत आहोत...'
+              : 'Navigating to Find Work page...'
+          );
+          break;
+
+        case '3':
+          setMenuState('help');
+          setLastActionMessage(t('voice.guide.title'));
+          break;
+
+        case '4':
+          setMenuState('faq');
+          setLastActionMessage(t('voice.faq.title'));
+          break;
+
+        case '5':
+          handleNavigate(
+            '/support',
+            language === 'hi'
+              ? 'अधिकार और सुरक्षा पृष्ठ पर ले जा रहे हैं...'
+              : language === 'mr'
+              ? 'हक्क आणि सुरक्षा पानावर नेत आहोत...'
+              : 'Navigating to Rights and Support page...'
+          );
+          break;
+
+        case '6':
+          setMenuState('language');
+          setLastActionMessage(
+            language === 'hi'
+              ? 'भाषा चयन: हिन्दी, मराठी, या अंग्रेज़ी'
+              : language === 'mr'
+              ? 'भाषा निवड: मराठी, हिन्दी, किंवा इंग्रजी'
+              : 'Select Language: English, Hindi, or Marathi'
+          );
+          break;
+
+        case '7':
+          handleNavigate(
+            '/profile',
+            language === 'hi'
+              ? 'मेरी जानकारी पृष्ठ पर ले जा रहे हैं...'
+              : language === 'mr'
+              ? 'माझी माहिती पानावर नेत आहोत...'
+              : 'Navigating to Worker Profile page...'
+          );
+          break;
+
+        case '8':
+          handleNavigate(
+            '/hire',
+            language === 'hi'
+              ? 'कामगार खोजें पृष्ठ पर ले जा रहे हैं...'
+              : language === 'mr'
+              ? 'कामगार शोधा पानावर नेत आहोत...'
+              : 'Navigating to Hire Workers page...'
+          );
+          break;
+
+        case '9':
+          stopSpeaking();
+          setLastActionMessage(
+            language === 'hi' ? 'आवाज़ बंद की गई।' : language === 'mr' ? 'आवाज थांबवला.' : 'Audio stopped.'
+          );
+          break;
+
+        case '*':
+          // Back to main
+          setMenuState('main');
+          setLastActionMessage(
+            language === 'hi' ? 'मुख्य मेनू पर वापस आए।' : language === 'mr' ? 'मुख्य मेनूवर परत आले.' : 'Returned to Main Menu.'
+          );
+          break;
+
+        case '0':
+          // Repeat current menu
+          lastSpokenRef.current = '';
+          setLastActionMessage(
+            language === 'hi' ? 'दोबारा सुन रहे हैं...' : language === 'mr' ? 'पुन्हा ऐकत आहोत...' : 'Repeating menu...'
+          );
+          break;
+
+        case '#':
+          // Return to root main menu
+          setMenuState('main');
+          lastSpokenRef.current = '';
+          setLastActionMessage(
+            language === 'hi' ? 'मुख्य मेनू' : language === 'mr' ? 'मुख्य मेनू' : 'Main Menu'
+          );
+          break;
+
+        default:
+          break;
+      }
+    },
+    [handleNavigate, language, stopSpeaking, t]
+  );
+
+  // Map voice words to keypad actions
+  const handleProcessSpokenText = useCallback(
+    (rawTranscript: string) => {
+      const text = rawTranscript.toLowerCase().trim();
+
+      if (text === '1' || text.includes('one') || text.includes('एक') || text.includes('info') || text.includes('जानकारी') || text.includes('माहिती')) {
+        handleKeypadPress('1');
+      } else if (text === '2' || text.includes('two') || text.includes('दो') || text.includes('दोन') || text.includes('job') || text.includes('work') || text.includes('काम')) {
+        handleKeypadPress('2');
+      } else if (text === '3' || text.includes('three') || text.includes('तीन') || text.includes('help') || text.includes('guide') || text.includes('सहायता')) {
+        handleKeypadPress('3');
+      } else if (text === '4' || text.includes('four') || text.includes('चार') || text.includes('faq') || text.includes('सवाल') || text.includes('प्रश्न')) {
+        handleKeypadPress('4');
+      } else if (text === '5' || text.includes('five') || text.includes('पाँच') || text.includes('पाच') || text.includes('support') || text.includes('सुरक्षा') || text.includes('हक्क')) {
+        handleKeypadPress('5');
+      } else if (text === '6' || text.includes('six') || text.includes('छह') || text.includes('सहा') || text.includes('language') || text.includes('भाषा')) {
+        handleKeypadPress('6');
+      } else if (text === '7' || text.includes('seven') || text.includes('सात') || text.includes('profile') || text.includes('कार्ड') || text.includes('बायो')) {
+        handleKeypadPress('7');
+      } else if (text === '8' || text.includes('eight') || text.includes('आठ') || text.includes('hire') || text.includes('कामगार') || text.includes('कारीगर')) {
+        handleKeypadPress('8');
+      } else if (text === '9' || text.includes('nine') || text.includes('नौ') || text.includes('नऊ') || text.includes('stop') || text.includes('शांत') || text.includes('बंद')) {
+        handleKeypadPress('9');
+      } else if (text.includes('back') || text.includes('पीछे') || text.includes('मागे')) {
+        handleKeypadPress('*');
+      } else if (text.includes('repeat') || text.includes('दोबारा') || text.includes('पुन्हा')) {
+        handleKeypadPress('0');
+      } else if (text.includes('main') || text.includes('मुख्य') || text.includes('होम')) {
+        handleKeypadPress('#');
+      } else {
+        // Fallback guidance
+        const fallbackText =
+          language === 'hi'
+            ? 'माफ़ कीजिए, कृपया 1 से 9, *, 0, या # दबाएँ।'
+            : language === 'mr'
+            ? 'माफ करा, कृपया 1 ते 9, *, 0, किंवा # दाबा.'
+            : 'Please press or speak any key from 1 to 9, star, zero, or hash.';
+        speakText(fallbackText);
+      }
+    },
+    [handleKeypadPress, language, speakText]
+  );
+
+  const commandHandlerRef = useRef(handleProcessSpokenText);
+  useEffect(() => {
+    commandHandlerRef.current = handleProcessSpokenText;
+  }, [handleProcessSpokenText]);
+
+  // Physical Keyboard Listener (0-9, *, #)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Do not intercept if user is typing in the input box
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      const key = e.key;
+      if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '*', '#'].includes(key)) {
+        e.preventDefault();
+        handleKeypadPress(key);
+      } else if (key === 'Escape') {
+        setIsOpen(false);
+        stopSpeaking();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handleKeypadPress, stopSpeaking]);
+
+  // Initialize Speech Recognition once
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -314,33 +393,38 @@ export const VoiceAssistant: React.FC = () => {
     };
   }, []);
 
-  // Cancel speech on language change or panel close without cascading render
+  // Cancel speech on language change or panel close
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
   }, [language, isOpen]);
 
-  // Trigger speech when panel opens or menu changes
+  // Trigger speech on panel open or menu state change
   useEffect(() => {
     if (!isOpen) return;
 
     let spokenContent = '';
     if (menuState === 'main') {
-      spokenContent = `${t('voice.welcome')} ${t('voice.ivr.prompt')} 1. ${t('voice.ivr.1')}. 2. ${t('voice.ivr.2')}. 3. ${t('voice.ivr.3')}. 4. ${t('voice.ivr.4')}. 5. ${t('voice.ivr.5')}. 6. ${t('voice.ivr.6')}. 7. ${t('voice.ivr.7')}`;
+      spokenContent =
+        language === 'hi'
+          ? 'सहायक आईवीआर में आपका स्वागत है। 1 जानकारी, 2 काम खोजें, 3 वेबसाइट मदद, 4 सवाल-जवाब, 5 अधिकार, 6 भाषा, 7 मेरी जानकारी, 8 कामगार खोजें, 9 आवाज़ बंद, स्टार पीछे, शून्य दोबारा सुनें, हैश मुख्य मेनू।'
+          : language === 'mr'
+          ? 'सहायक आयव्हीआरमध्ये आपले स्वागत आहे. 1 माहिती, 2 काम शोधा, 3 संकेतस्थळ मदत, 4 प्रश्न-उत्तरे, 5 हक्क, 6 भाषा, 7 माझी माहिती, 8 कामगार शोधा, 9 आवाज बंद, स्टार मागे, शून्य पुन्हा ऐका, हॅश मुख्य मेनू.'
+          : 'Welcome to Sahayak IVR. 1 Find Info, 2 Find Work, 3 Site Help, 4 FAQs, 5 Rights & Safety, 6 Language, 7 My Profile, 8 Hire Workers, 9 Stop Audio, Star Go Back, Zero Repeat, Hash Main Menu.';
     } else if (menuState === 'info') {
       spokenContent = `${t('voice.info.title')}. ${t('voice.info.desc')}`;
     } else if (menuState === 'help') {
       spokenContent = `${t('voice.guide.title')}. ${t('voice.guide.desc')}`;
     } else if (menuState === 'faq') {
-      spokenContent = `${t('voice.faq.title')}. ${t('voice.faq.1.q')}: ${t('voice.faq.1.a')}. ${t('voice.faq.2.q')}: ${t('voice.faq.2.a')}`;
+      spokenContent = `${t('voice.faq.title')}. 1: ${t('voice.faq.1.q')}. ${t('voice.faq.1.a')}. 2: ${t('voice.faq.2.q')}. ${t('voice.faq.2.a')}`;
     } else if (menuState === 'language') {
       spokenContent =
         language === 'hi'
-          ? 'कृपया अपनी भाषा चुनें: हिन्दी, मराठी, या अंग्रेज़ी।'
+          ? 'भाषा चयन करें: 1 हिन्दी, 2 मराठी, 3 अंग्रेज़ी।'
           : language === 'mr'
-          ? 'कृपया आपली भाषा निवडा: मराठी, हिन्दी, किंवा इंग्रजी.'
-          : 'Please choose your language: English, Hindi, or Marathi.';
+          ? 'भाषा निवडा: 1 हिन्दी, 2 मराठी, 3 इंग्रजी.'
+          : 'Select language: 1 Hindi, 2 Marathi, 3 English.';
     }
 
     if (spokenContent && spokenContent !== lastSpokenRef.current) {
@@ -348,7 +432,7 @@ export const VoiceAssistant: React.FC = () => {
     }
   }, [isOpen, menuState, language, speakText, t]);
 
-  // Toggle speech recognition
+  // Toggle Speech Recognition
   const toggleListening = () => {
     setRecognitionError(null);
     if (!recognitionRef.current) {
@@ -382,35 +466,12 @@ export const VoiceAssistant: React.FC = () => {
     if (!inputText.trim()) return;
     const msg = inputText;
     setInputText('');
-    handleProcessCommand(msg);
-  };
-
-  const handleRepeat = () => {
-    lastSpokenRef.current = '';
-    if (menuState === 'main') {
-      speakText(
-        `${t('voice.welcome')} ${t('voice.ivr.prompt')} 1. ${t('voice.ivr.1')}. 2. ${t('voice.ivr.2')}. 3. ${t('voice.ivr.3')}. 4. ${t('voice.ivr.4')}. 5. ${t('voice.ivr.5')}. 6. ${t('voice.ivr.6')}. 7. ${t('voice.ivr.7')}`
-      );
-    } else if (menuState === 'info') {
-      speakText(`${t('voice.info.title')}. ${t('voice.info.desc')}`);
-    } else if (menuState === 'help') {
-      speakText(`${t('voice.guide.title')}. ${t('voice.guide.desc')}`);
-    } else if (menuState === 'faq') {
-      speakText(`${t('voice.faq.title')}. ${t('voice.faq.1.q')}: ${t('voice.faq.1.a')}`);
-    } else if (menuState === 'language') {
-      speakText(
-        language === 'hi'
-          ? 'कृपया अपनी भाषा चुनें'
-          : language === 'mr'
-          ? 'कृपया आपली भाषा निवडा'
-          : 'Please select your language'
-      );
-    }
+    handleProcessSpokenText(msg);
   };
 
   return (
     <>
-      {/* Floating Launcher Button */}
+      {/* Floating Launcher Trigger */}
       <aside aria-label="Voice Help Trigger" className="fixed bottom-6 right-6 z-40">
         <button
           type="button"
@@ -419,77 +480,95 @@ export const VoiceAssistant: React.FC = () => {
             setIsOpen(next);
             if (!next) stopSpeaking();
           }}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-full font-semibold shadow-xl transition-all duration-200 border text-sm ${
+          className={`group flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-full font-semibold shadow-2xl transition-all duration-200 border text-xs sm:text-sm ${
             isOpen
-              ? 'bg-[#111827] text-white border-slate-700'
-              : 'bg-[#0F766E] hover:bg-[#0D655E] text-white border-teal-500 hover:scale-105 active:scale-95'
+              ? 'bg-[#111827] text-white border-slate-700 shadow-teal-950/40'
+              : 'bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#0D655E] hover:to-[#0F766E] text-white border-teal-400/30 hover:scale-105 active:scale-95 shadow-teal-900/40'
           }`}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
           aria-label={t('voice.btn')}
         >
+          {/* Pulsing Signal Wave */}
           <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14B8A6] opacity-75" />
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#14B8A6]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
           </span>
-          <Mic className="w-4 h-4 text-white shrink-0" />
-          <span className="tracking-wide">{t('voice.btn')}</span>
+
+          <PhoneCall className="w-4 h-4 text-white shrink-0 group-hover:rotate-12 transition-transform duration-200" />
+          <span className="font-semibold tracking-wide drop-shadow-xs">{t('voice.btn')}</span>
         </button>
       </aside>
 
-      {/* Voice Assistant Panel Modal */}
+      {/* Premium Telephone IVR Keypad Panel */}
       {isOpen && (
         <section
           role="dialog"
-          aria-labelledby="voice-assistant-title"
-          className="fixed bottom-22 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden text-slate-800"
+          aria-labelledby="keypad-assistant-title"
+          className="fixed bottom-22 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] max-h-[85vh] flex flex-col bg-[#111827] rounded-[28px] shadow-2xl border border-slate-700/80 overflow-hidden text-slate-100 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200"
         >
-          {/* Header */}
-          <div className="bg-[#111827] text-white px-5 py-4 flex items-center justify-between border-b border-slate-800">
+          {/* 1. TOP HEADER & TELEPHONE STATUS */}
+          <div className="bg-slate-900/90 px-4 py-3 flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#0F766E] flex items-center justify-center text-[#14B8A6]">
-                <Mic className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0F766E] to-[#14B8A6] flex items-center justify-center text-white shadow-sm shadow-teal-900">
+                <PhoneCall className="w-4 h-4" />
               </div>
               <div>
-                <h2 id="voice-assistant-title" className="font-serif font-bold text-sm tracking-tight">
-                  {t('voice.title')}
-                </h2>
+                <div className="flex items-center gap-1.5">
+                  <h2 id="keypad-assistant-title" className="font-serif font-bold text-sm tracking-tight text-white">
+                    {t('voice.title')}
+                  </h2>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-950/80 text-teal-400 border border-teal-800/60">
+                    IVR
+                  </span>
+                </div>
                 <p className="text-[11px] text-slate-400">{t('voice.subtitle')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5">
-              {/* Stop / Resume speech */}
-              {isSpeaking ? (
+              {/* Language Indicator & Quick Toggle */}
+              <div className="inline-flex rounded-lg bg-slate-800 p-0.5 border border-slate-700">
                 <button
                   type="button"
-                  onClick={stopSpeaking}
-                  title={t('voice.action.stop')}
-                  className="p-1.5 rounded-lg bg-teal-900/60 text-[#14B8A6] hover:bg-teal-900 transition-colors"
-                  aria-label={t('voice.action.stop')}
+                  onClick={() => setLanguage('hi')}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                    language === 'hi' ? 'bg-[#0F766E] text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="हिन्दी"
                 >
-                  <VolumeX className="w-4 h-4 animate-pulse" />
+                  HI
                 </button>
-              ) : (
                 <button
                   type="button"
-                  onClick={handleRepeat}
-                  title={t('voice.action.repeat')}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors"
-                  aria-label={t('voice.action.repeat')}
+                  onClick={() => setLanguage('mr')}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                    language === 'mr' ? 'bg-[#0F766E] text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="मराठी"
                 >
-                  <Volume2 className="w-4 h-4" />
+                  MR
                 </button>
-              )}
+                <button
+                  type="button"
+                  onClick={() => setLanguage('en')}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                    language === 'en' ? 'bg-[#0F766E] text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="English"
+                >
+                  EN
+                </button>
+              </div>
 
-              {/* Close panel */}
+              {/* Close Button */}
               <button
                 type="button"
                 onClick={() => {
                   stopSpeaking();
                   setIsOpen(false);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 aria-label={t('common.close')}
               >
                 <X className="w-4 h-4" />
@@ -497,337 +576,283 @@ export const VoiceAssistant: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Language Switcher Bar inside Assistant */}
-          <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium flex items-center gap-1">
-              <Languages className="w-3.5 h-3.5 text-[#0F766E]" />
-              <span>Language:</span>
-            </span>
-            <div className="inline-flex rounded-lg bg-white p-0.5 border border-slate-300">
-              <button
-                type="button"
-                onClick={() => setLanguage('hi')}
-                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
-                  language === 'hi' ? 'bg-[#0F766E] text-white' : 'text-slate-600 hover:text-[#0F766E]'
-                }`}
-              >
-                हिन्दी
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('mr')}
-                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
-                  language === 'mr' ? 'bg-[#0F766E] text-white' : 'text-slate-600 hover:text-[#0F766E]'
-                }`}
-              >
-                मराठी
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
-                  language === 'en' ? 'bg-[#0F766E] text-white' : 'text-slate-600 hover:text-[#0F766E]'
-                }`}
-              >
-                EN
-              </button>
+          {/* 2. DIGITAL OLED DISPLAY CONSOLE (Activity & Sound Waveform) */}
+          <div className="p-3.5 bg-gradient-to-b from-[#0B1120] to-[#0F172A] border-b border-slate-800 text-slate-200">
+            {/* Status Bar with Soundwave Animation */}
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80 text-[11px]">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isListening
+                      ? 'bg-red-500 animate-ping'
+                      : isSpeaking
+                      ? 'bg-[#14B8A6] animate-pulse'
+                      : 'bg-emerald-400'
+                  }`}
+                />
+                <span className="font-mono text-slate-400 text-[10px]">
+                  {isListening
+                    ? t('keypad.status.listening')
+                    : isSpeaking
+                    ? t('keypad.status.speaking')
+                    : isNavigating
+                    ? t('keypad.status.navigating')
+                    : t('keypad.status.ready')}
+                </span>
+              </div>
+
+              {/* Sound Waveform Bars */}
+              <div className="flex items-center gap-0.5 h-3" aria-hidden="true">
+                {[1, 2, 3, 4, 5, 6, 7].map((bar) => {
+                  const isDancing = isSpeaking || isListening;
+                  const height = isDancing
+                    ? bar % 2 === 0
+                      ? 'h-3'
+                      : bar % 3 === 0
+                      ? 'h-2'
+                      : 'h-1.5'
+                    : 'h-1';
+                  return (
+                    <span
+                      key={bar}
+                      className={`w-0.5 rounded-full transition-all duration-150 ${height} ${
+                        isListening
+                          ? 'bg-red-400'
+                          : isSpeaking
+                          ? 'bg-[#14B8A6]'
+                          : 'bg-slate-700'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Readout Display Screen */}
+            <div className="min-h-[64px] flex flex-col justify-center">
+              {menuState === 'main' && (
+                <div>
+                  <p className="text-xs font-semibold text-teal-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                    <span>{t('voice.welcome')}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                    {t('keypad.instruction')}
+                  </p>
+                  {lastActionMessage && (
+                    <p className="text-[10px] text-amber-300 font-mono mt-1">
+                      ► {lastActionMessage}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Sub-view: 1. Info */}
+              {menuState === 'info' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-teal-300">{t('voice.info.title')}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('*')}
+                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-0.5"
+                    >
+                      <ArrowLeft className="w-3 h-3" />
+                      <span>{t('keypad.star.label')} (*)</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-snug line-clamp-3">
+                    {t('voice.info.desc')}
+                  </p>
+                </div>
+              )}
+
+              {/* Sub-view: 3. Help */}
+              {menuState === 'help' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-teal-300">{t('voice.guide.title')}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('*')}
+                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-0.5"
+                    >
+                      <ArrowLeft className="w-3 h-3" />
+                      <span>{t('keypad.star.label')} (*)</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-snug line-clamp-3">
+                    {t('voice.guide.desc')}
+                  </p>
+                </div>
+              )}
+
+              {/* Sub-view: 4. FAQ */}
+              {menuState === 'faq' && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-teal-300">{t('voice.faq.title')}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('*')}
+                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-0.5"
+                    >
+                      <ArrowLeft className="w-3 h-3" />
+                      <span>{t('keypad.star.label')} (*)</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] font-bold text-white line-clamp-1">{t('voice.faq.1.q')}</p>
+                  <p className="text-[10px] text-slate-300 leading-snug line-clamp-2">{t('voice.faq.1.a')}</p>
+                </div>
+              )}
+
+              {/* Sub-view: 6. Language */}
+              {menuState === 'language' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-teal-300 flex items-center gap-1">
+                      <Languages className="w-3.5 h-3.5" />
+                      <span>Choose Language</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleKeypadPress('*')}
+                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-0.5"
+                    >
+                      <ArrowLeft className="w-3 h-3" />
+                      <span>{t('keypad.star.label')} (*)</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLanguage('hi');
+                        setMenuState('main');
+                      }}
+                      className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                        language === 'hi' ? 'bg-[#0F766E] border-teal-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-300'
+                      }`}
+                    >
+                      1. हिन्दी
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLanguage('mr');
+                        setMenuState('main');
+                      }}
+                      className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                        language === 'mr' ? 'bg-[#0F766E] border-teal-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-300'
+                      }`}
+                    >
+                      2. मराठी
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLanguage('en');
+                        setMenuState('main');
+                      }}
+                      className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                        language === 'en' ? 'bg-[#0F766E] border-teal-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-300'
+                      }`}
+                    >
+                      3. English
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Dynamic Content Body */}
-          <div className="p-4 sm:p-5 overflow-y-auto space-y-3.5 flex-1 text-xs sm:text-sm">
-            {/* Listening Banner */}
-            {isListening && (
-              <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200 text-[#0F766E] flex items-center gap-2 animate-pulse">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                <span className="font-semibold text-xs">{t('voice.action.listen')}</span>
-              </div>
-            )}
+          {/* 3. TACTILE 3 × 4 TELEPHONE KEYPAD GRID */}
+          <div className="p-3 sm:p-4 bg-slate-900/60">
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5" role="group" aria-label="Telephone Keypad">
+              {KEYPAD_BUTTONS.map((btn) => {
+                const isFlash = activeKey === btn.key;
+                const label = t(btn.subTextKey);
 
-            {/* Error or unsupported browser alert */}
-            {recognitionError && (
-              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
-                <Info className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-                <span>{recognitionError}</span>
-              </div>
-            )}
-
-            {!isSpeechSupported && (
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs flex items-center gap-2">
-                <Info className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{t('voice.mic.unsupported')}</span>
-              </div>
-            )}
-
-            {/* Welcome & Prompt */}
-            <div className="bg-[#F8FAFC] border border-slate-200 p-3 rounded-2xl">
-              <p className="font-bold text-slate-900">{t('voice.welcome')}</p>
-              <p className="text-xs text-slate-500 mt-1">{t('voice.ivr.prompt')}</p>
-            </div>
-
-            {/* MAIN MENU (Options 1 to 7) */}
-            {menuState === 'main' && (
-              <div className="space-y-1.5" role="menu">
-                <button
-                  type="button"
-                  onClick={() => setMenuState('info')}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      1
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.1')}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/work');
-                  }}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      2
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.2')}
-                    </span>
-                  </div>
-                  <Briefcase className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setMenuState('help')}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      3
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.3')}
-                    </span>
-                  </div>
-                  <HelpCircle className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setMenuState('faq')}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      4
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.4')}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/support');
-                  }}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      5
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.5')}
-                    </span>
-                  </div>
-                  <ShieldCheck className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setMenuState('language')}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-teal-100 text-[#0F766E] font-bold text-xs flex items-center justify-center">
-                      6
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.6')}
-                    </span>
-                  </div>
-                  <Languages className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleRepeat}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-[#0F766E] hover:bg-teal-50/50 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">
-                      7
-                    </span>
-                    <span className="font-medium text-slate-800 group-hover:text-[#0F766E]">
-                      {t('voice.ivr.7')}
-                    </span>
-                  </div>
-                  <RotateCcw className="w-4 h-4 text-slate-400 group-hover:text-[#0F766E]" />
-                </button>
-              </div>
-            )}
-
-            {/* SUB-VIEW 1: Info */}
-            {menuState === 'info' && (
-              <div className="space-y-3">
-                <div className="p-3.5 rounded-2xl bg-teal-50/60 border border-teal-200">
-                  <h3 className="font-bold text-slate-900 text-xs sm:text-sm">{t('voice.info.title')}</h3>
-                  <p className="text-xs text-slate-700 mt-1 leading-relaxed">{t('voice.info.desc')}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/work');
-                  }}
-                  className="w-full py-2.5 px-3 bg-[#0F766E] text-white rounded-xl font-semibold text-xs hover:bg-[#115E59] transition-colors"
-                >
-                  {t('voice.ivr.2')}
-                </button>
-              </div>
-            )}
-
-            {/* SUB-VIEW 3: Guide / Help */}
-            {menuState === 'help' && (
-              <div className="space-y-3">
-                <div className="p-3.5 rounded-2xl bg-teal-50/60 border border-teal-200">
-                  <h3 className="font-bold text-slate-900 text-xs sm:text-sm">{t('voice.guide.title')}</h3>
-                  <p className="text-xs text-slate-700 mt-1 leading-relaxed">{t('voice.guide.desc')}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                return (
                   <button
+                    key={btn.key}
                     type="button"
-                    onClick={() => {
-                      setIsOpen(false);
-                      navigate('/profile');
-                    }}
-                    className="p-2 rounded-xl border border-slate-300 font-semibold text-center hover:bg-slate-50"
-                  >
-                    {t('nav.profile')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsOpen(false);
-                      navigate('/hire');
-                    }}
-                    className="p-2 rounded-xl border border-slate-300 font-semibold text-center hover:bg-slate-50"
-                  >
-                    {t('nav.hire')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* SUB-VIEW 4: FAQ */}
-            {menuState === 'faq' && (
-              <div className="space-y-2.5">
-                <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                  <h4 className="font-bold text-xs text-slate-900">{t('voice.faq.1.q')}</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">{t('voice.faq.1.a')}</p>
-                </div>
-                <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                  <h4 className="font-bold text-xs text-slate-900">{t('voice.faq.2.q')}</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">{t('voice.faq.2.a')}</p>
-                </div>
-                <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
-                  <h4 className="font-bold text-xs text-slate-900">{t('voice.faq.3.q')}</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">{t('voice.faq.3.a')}</p>
-                </div>
-              </div>
-            )}
-
-            {/* SUB-VIEW 6: Language */}
-            {menuState === 'language' && (
-              <div className="space-y-2">
-                <p className="text-xs text-slate-500 font-medium">Select preferred language:</p>
-                {(['hi', 'mr', 'en'] as Language[]).map((lng) => (
-                  <button
-                    key={lng}
-                    type="button"
-                    onClick={() => {
-                      setLanguage(lng);
-                      setMenuState('main');
-                    }}
-                    className={`w-full p-2.5 rounded-xl border text-left font-semibold flex items-center justify-between transition-colors ${
-                      language === lng
-                        ? 'border-[#0F766E] bg-teal-50 text-[#0F766E]'
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-800'
+                    onClick={() => handleKeypadPress(btn.key)}
+                    className={`group relative flex flex-col items-center justify-center py-2.5 sm:py-3 px-1 rounded-2xl border transition-all duration-150 select-none ${
+                      isFlash
+                        ? 'bg-teal-900 border-[#14B8A6] shadow-md shadow-teal-500/30 scale-95 ring-2 ring-[#14B8A6]'
+                        : 'bg-gradient-to-b from-slate-800/90 to-slate-900/95 border-slate-700/60 hover:border-teal-500/50 hover:from-slate-700/90 hover:to-slate-800/95 shadow-md shadow-black/40 active:scale-95'
                     }`}
+                    aria-label={`Key ${btn.key}: ${label}`}
                   >
-                    <span>{lng === 'hi' ? 'हिन्दी (Hindi)' : lng === 'mr' ? 'मराठी (Marathi)' : 'English'}</span>
-                    {language === lng && <span className="text-xs font-bold">Active</span>}
+                    {/* Primary Large Key Digit */}
+                    <span className="font-mono font-bold text-lg sm:text-xl text-slate-100 group-hover:text-teal-300 tracking-wider">
+                      {btn.key}
+                    </span>
+
+                    {/* Secondary Sub-Label */}
+                    <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 group-hover:text-slate-200 mt-0.5 leading-tight tracking-tight text-center truncate max-w-[90%]">
+                      {label}
+                    </span>
                   </button>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
 
-          {/* Assistant Action Bar (Back / Repeat / Main Menu) */}
-          <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs">
-            {menuState !== 'main' ? (
+          {/* 4. KEYPAD QUICK CONTROLS BAR (Audio / Repeat / Main Menu) */}
+          <div className="px-3.5 py-2 bg-slate-950/80 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setMenuState('main')}
-                className="inline-flex items-center gap-1 font-semibold text-[#0F766E] hover:text-[#115E59]"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>{t('voice.action.back')}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleRepeat}
-                className="inline-flex items-center gap-1 font-semibold text-slate-600 hover:text-slate-900"
+                onClick={() => handleKeypadPress('0')}
+                className="inline-flex items-center gap-1 hover:text-teal-300 transition-colors"
+                title={t('keypad.0.label')}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>{t('voice.action.repeat')}</span>
+                <span className="text-[11px]">{t('keypad.0.label')} (0)</span>
               </button>
-            )}
 
+              <button
+                type="button"
+                onClick={() => handleKeypadPress('#')}
+                className="inline-flex items-center gap-1 hover:text-teal-300 transition-colors"
+                title={t('keypad.hash.label')}
+              >
+                <Menu className="w-3.5 h-3.5" />
+                <span className="text-[11px]">{t('keypad.hash.label')} (#)</span>
+              </button>
+            </div>
+
+            {/* Audio Toggle / Stop Button */}
             <button
               type="button"
-              onClick={() => setMenuState('main')}
-              className="inline-flex items-center gap-1 font-semibold text-slate-600 hover:text-slate-900"
+              onClick={() => handleKeypadPress('9')}
+              className={`p-1.5 rounded-lg transition-colors ${
+                isSpeaking
+                  ? 'bg-amber-900/40 text-amber-300 hover:bg-amber-900'
+                  : 'hover:text-white'
+              }`}
+              title={isSpeaking ? t('voice.action.stop') : 'Audio Status'}
+              aria-label={t('voice.action.stop')}
             >
-              <Menu className="w-3.5 h-3.5" />
-              <span>{t('voice.action.mainMenu')}</span>
+              {isSpeaking ? <VolumeX className="w-4 h-4 animate-pulse" /> : <Volume2 className="w-4 h-4" />}
             </button>
           </div>
 
-          {/* Footer Input Bar with Mic and Send Button */}
+          {/* 5. BOTTOM COMMAND & SPEECH-TO-TEXT INPUT BAR */}
           <form
             onSubmit={handleManualSubmit}
-            className="p-3 bg-white border-t border-slate-200 flex items-center gap-2"
+            className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2"
           >
+            {/* Microphone Activation Button */}
             <button
               type="button"
               onClick={toggleListening}
-              className={`p-2 rounded-xl transition-all ${
+              className={`p-2.5 rounded-xl transition-all shadow-sm ${
                 isListening
-                  ? 'bg-red-500 text-white animate-pulse'
-                  : 'bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4] hover:bg-[#CCFBF1]'
+                  ? 'bg-red-500 text-white animate-pulse shadow-red-500/40 scale-105'
+                  : 'bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#0D655E] hover:to-[#0F766E] text-white shadow-teal-950/40 hover:scale-105 active:scale-95'
               }`}
               title={isListening ? 'Stop listening' : t('voice.action.speak')}
               aria-label={t('voice.action.speak')}
@@ -835,23 +860,40 @@ export const VoiceAssistant: React.FC = () => {
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
 
+            {/* Text Input for Typing digits or queries */}
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder={t('voice.input.placeholder')}
-              className="flex-1 text-xs py-2 px-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0F766E]"
+              className="flex-1 text-xs py-2 px-3 bg-slate-950 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400"
             />
 
+            {/* Send Button */}
             <button
               type="submit"
               disabled={!inputText.trim()}
-              className="p-2 rounded-xl bg-[#0F766E] hover:bg-[#115E59] disabled:opacity-40 text-white transition-colors"
+              className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-teal-400 hover:text-teal-300 border border-slate-700 transition-colors"
               aria-label={t('voice.action.send')}
             >
               <Send className="w-4 h-4" />
             </button>
           </form>
+
+          {/* Error Message notice if mic error occurs */}
+          {recognitionError && (
+            <div className="px-3 py-1.5 bg-amber-950/90 border-t border-amber-800 text-amber-300 text-[11px] flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{recognitionError}</span>
+            </div>
+          )}
+
+          {!isSpeechSupported && (
+            <div className="px-3 py-1 bg-slate-950 border-t border-slate-800 text-slate-500 text-[10px] flex items-center gap-1">
+              <Info className="w-3 h-3 shrink-0" />
+              <span>{t('voice.mic.unsupported')}</span>
+            </div>
+          )}
         </section>
       )}
     </>

@@ -333,6 +333,25 @@ export const TRANSLATIONS: Record<'hi' | 'en' | 'mr', Record<string, string>> = 
     'voice.faq.3.q': 'धोखाधड़ी से कैसे बचें?',
     'voice.faq.3.a': 'काम शुरू करने से पहले कभी रजिस्ट्रेशन फीस न दें और न ही मूल पहचान पत्र किसी को सौंपें।',
 
+    // --- Keypad Buttons (3x4 Layout) ---
+    'keypad.1.label': 'जानकारी',
+    'keypad.2.label': 'काम खोजें',
+    'keypad.3.label': 'वेबसाइट मदद',
+    'keypad.4.label': 'सवाल-जवाब',
+    'keypad.5.label': 'अधिकार व सुरक्षा',
+    'keypad.6.label': 'भाषा बदलें',
+    'keypad.7.label': 'मेरी जानकारी',
+    'keypad.8.label': 'कामगार खोजें',
+    'keypad.9.label': 'आवाज़ बंद',
+    'keypad.star.label': 'पीछे जाएँ',
+    'keypad.0.label': 'दोबारा सुनें',
+    'keypad.hash.label': 'मुख्य मेनू',
+    'keypad.instruction': 'बटन दबाएँ (1-9, *, 0, #) या बोलकर बताएँ',
+    'keypad.status.ready': 'आईवीआर कीपैड तैयार • नंबर दबाएँ',
+    'keypad.status.speaking': 'ऑडियो मार्गदर्शन चालू है...',
+    'keypad.status.listening': 'आपकी आवाज़ सुन रहे हैं...',
+    'keypad.status.navigating': 'पेज पर ले जा रहे हैं...',
+
     // --- Not Found & Motion Lab ---
     'notFound.title': '404 — पृष्ठ नहीं मिला',
     'notFound.desc': 'जिस पृष्ठ को आप खोज रहे हैं, वह मौजूद नहीं है।',
@@ -672,6 +691,25 @@ export const TRANSLATIONS: Record<'hi' | 'en' | 'mr', Record<string, string>> = 
     'voice.faq.3.q': 'How do I avoid fraudulent offers?',
     'voice.faq.3.a': 'Never pay upfront registration or gate fees, and never surrender original identity cards or bank passbooks.',
 
+    // --- Keypad Buttons (3x4 Layout) ---
+    'keypad.1.label': 'Find Info',
+    'keypad.2.label': 'Find Work',
+    'keypad.3.label': 'Site Help',
+    'keypad.4.label': 'FAQs',
+    'keypad.5.label': 'Rights & Safety',
+    'keypad.6.label': 'Language',
+    'keypad.7.label': 'My Profile',
+    'keypad.8.label': 'Hire Worker',
+    'keypad.9.label': 'Stop Audio',
+    'keypad.star.label': 'Go Back',
+    'keypad.0.label': 'Repeat Menu',
+    'keypad.hash.label': 'Main Menu',
+    'keypad.instruction': 'Press keypad key (1-9, *, 0, #) or speak a command',
+    'keypad.status.ready': 'IVR Keypad Ready • Press a key',
+    'keypad.status.speaking': 'Speaking audio guidance...',
+    'keypad.status.listening': 'Listening for voice command...',
+    'keypad.status.navigating': 'Navigating to page...',
+
     // --- Not Found & Motion Lab ---
     'notFound.title': '404 — Page Not Found',
     'notFound.desc': 'The page you are looking for does not exist.',
@@ -772,6 +810,25 @@ export const TRANSLATIONS: Record<'hi' | 'en' | 'mr', Record<string, string>> = 
     'voice.faq.2.a': 'काम संपल्यावर मालकाकडून थेट रोख, यूपीआय (UPI) किंवा बँक खात्यात दिली जाते.',
     'voice.faq.3.q': 'फसवणुकीपासून स्वतःला कसे वाचवावे?',
     'voice.faq.3.a': 'काम सुरू करण्यापूर्वी कोणालाही आगाऊ नोंदणी फी देऊ नका आणि मूळ ओळखपत्रे कोणाकडेही ठेवू नका.',
+
+    // --- Keypad Buttons (3x4 Layout) ---
+    'keypad.1.label': 'माहिती मिळवा',
+    'keypad.2.label': 'काम शोधा',
+    'keypad.3.label': 'संकेतस्थळ मदत',
+    'keypad.4.label': 'वारंवार प्रश्न',
+    'keypad.5.label': 'हक्क व सुरक्षा',
+    'keypad.6.label': 'भाषा बदला',
+    'keypad.7.label': 'माझी माहिती',
+    'keypad.8.label': 'कामगार शोधा',
+    'keypad.9.label': 'आवाज थांबवा',
+    'keypad.star.label': 'मागे जा',
+    'keypad.0.label': 'पुन्हा ऐका',
+    'keypad.hash.label': 'मुख्य मेनू',
+    'keypad.instruction': 'बटण दाबा (1-9, *, 0, #) किंवा बोलून सांगा',
+    'keypad.status.ready': 'आयव्हीआर कीपॅड सज्ज • नंबर दाबा',
+    'keypad.status.speaking': 'ऑडिओ मार्गदर्शन चालू आहे...',
+    'keypad.status.listening': 'आपला आवाज ऐकत आहोत...',
+    'keypad.status.navigating': 'पानावर नेत आहोत...',
 
     // --- Homepage & Hero ---
     'home.hero.badge': 'आर्टेमिस 2026 पुढाकार • निष्पक्ष रोजगार नेटवर्क',
