@@ -499,7 +499,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                 WHERE SKILLS MEET OPPORTUNITY
               </span>
               <h3 className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Direct Local Verification & Connection
+                Direct Local Connection
               </h3>
             </div>
 
@@ -508,24 +508,24 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div ref={workerNodeRef} className="sss-card-node text-left border-l-4 border-l-[#14B8A6]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-mono text-[#14B8A6] font-semibold uppercase tracking-wider">
-                    Verified Artisan Profile
+                    Artisan Case Study
                   </span>
                   <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#14B8A6]/20 text-[#14B8A6] border border-[#14B8A6]/30">
-                    Aadhaar Verified
+                    Demonstration Profile
                   </span>
                 </div>
                 <h4 className="font-serif text-xl font-bold text-white mb-1">
                   Rameshwar Jadhav
                 </h4>
                 <p className="text-xs text-[#DBEAFE]/80 mb-3">
-                  Master Mason & Heritage Plasterer • 12+ Years Experience
+                  Master Mason &amp; Lime Plasterer • 12+ Years Experience
                 </p>
                 <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-700/80">
                   <span className="text-slate-400 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#14B8A6]" /> Kothrud, Pune
                   </span>
                   <span className="text-white font-mono font-semibold flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5 text-amber-400" /> 4.9 Rating (84 Jobs)
+                    <Award className="w-3.5 h-3.5 text-amber-400" /> 4.9 Rating (Sample Profile)
                   </span>
                 </div>
               </div>
@@ -551,7 +551,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                     <MapPin className="w-3.5 h-3.5 text-[#8B5CF6]" /> Kothrud Site (8.2 km)
                   </span>
                   <span className="text-[#14B8A6] font-mono font-bold flex items-center gap-1">
-                    <Banknote className="w-3.5 h-3.5" /> ₹950 / Day Guaranteed
+                    <Banknote className="w-3.5 h-3.5" /> ₹950 / Day Offered Rate
                   </span>
                 </div>
               </div>
@@ -575,7 +575,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-4 border-b border-[#E2E8F0]">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0F766E]/10 text-[#0F766E] text-xs font-bold tracking-wide uppercase">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#0F766E]" />
-                  Verified Direct Listing
+                  Sample Direct Listing
                 </span>
                 <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                   SAMPLE SHOWCASE DATA
@@ -584,7 +584,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
 
               {/* Job Title & Trade */}
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#111827] leading-snug mb-2">
-                Master Mason & Heritage Plasterer
+                Master Mason &amp; Heritage Plasterer
               </h3>
               <p className="text-sm text-[#334155] leading-relaxed mb-6">
                 Direct residential contract in Kothrud, Pune. Restoring exposed stone arches and lime plaster on a residential bungalow.
@@ -594,7 +594,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Guaranteed Rate
+                    Offered Day Rate
                   </div>
                   <div className="text-lg font-bold font-serif text-[#0F766E]">
                     ₹950 / Day
@@ -602,7 +602,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                 </div>
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Engagement
+                    Duration
                   </div>
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-1 mt-0.5">
                     <Calendar className="w-3.5 h-3.5 text-slate-600" /> 12 Days Fixed
@@ -610,7 +610,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Proximity
+                    Location
                   </div>
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-1 mt-0.5">
                     <MapPin className="w-3.5 h-3.5 text-[#0F766E]" /> Kothrud, Pune
@@ -622,7 +622,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs text-slate-600">
                 <span className="flex items-center gap-1.5 font-medium">
                   <CheckCircle2 className="w-4 h-4 text-[#0F766E]" />
-                  100% Direct Payout to Worker Bank Account
+                  Direct Payment Between Employer and Worker
                 </span>
                 <span className="font-mono text-[11px] text-slate-500">
                   ID: SHY-DEMO-PUN-084 • Illustrative Sample Listing
