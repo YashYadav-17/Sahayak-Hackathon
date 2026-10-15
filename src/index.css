@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #15372E;
+  --color-forest-dark: #0E251F;
+  --color-forest-light: #1C483D;
+  --color-forest-subtle: #EDF3F1;
+  --color-paper: #F5F0E6;
+  --color-paper-light: #FBF7F0;
+  --color-paper-dark: #EAE3D2;
+  --color-orange: #F16B3A;
+  --color-orange-hover: #DE5724;
+  --color-orange-subtle: #FDF1EA;
+  --color-lime: #C8EEA0;
+  --color-lime-light: #EBF8D9;
+  --color-lime-dark: #9BCC63;
+  --color-ink: #202820;
+  --color-ink-light: #4A5649;
+  --color-ink-muted: #738072;
+  --color-neutral-border: #DCD5C8;
+  --color-neutral-border-dark: #C6BEAE;
+
+  --font-serif: "Fraunces", "Martel", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "Mukta", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-devanagari: "Mukta", "Martel", "Noto Sans Devanagari", sans-serif;
+}
+
+:root {
+  --forest: #15372E;
+  --paper: #F5F0E6;
+  --orange: #F16B3A;
+  --lime: #C8EEA0;
+  --ink: #202820;
+  --border: #DCD5C8;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: #F5F0E6;
+  color: #202820;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessibility: Visible, high-contrast focus rings for keyboard users */
+:focus-visible {
+  outline: 2px solid #15372E;
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
