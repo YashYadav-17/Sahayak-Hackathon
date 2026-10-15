@@ -26,19 +26,11 @@ import {
   HardHat,
 } from 'lucide-react';
 import type { UserWorkerProfile, WorkerTrade, WorkerAvailabilityStatus } from '../types/worker';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const STORAGE_KEY = 'sahayak_worker_profile';
 
-const TRADE_OPTIONS: { id: Exclude<WorkerTrade, 'all'>; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: 'electrician', label: 'Electrician', icon: Zap },
-  { id: 'plumber', label: 'Plumber', icon: Wrench },
-  { id: 'carpenter', label: 'Carpenter', icon: Hammer },
-  { id: 'painter', label: 'Painter', icon: Paintbrush },
-  { id: 'mason', label: 'Mason', icon: HardHat },
-  { id: 'general', label: 'General Labour', icon: Briefcase },
-];
-
-const TRADE_SKILL_PRESETS: Record<Exclude<WorkerTrade, 'all'>, string[]> = {
+const TRADE_SKILL_PRESETS_EN: Record<Exclude<WorkerTrade, 'all'>, string[]> = {
   electrician: [
     'Concealed House Wiring',
     'MCB Distribution Board',
@@ -101,6 +93,69 @@ const TRADE_SKILL_PRESETS: Record<Exclude<WorkerTrade, 'all'>, string[]> = {
   ],
 };
 
+const TRADE_SKILL_PRESETS_HI: Record<Exclude<WorkerTrade, 'all'>, string[]> = {
+  electrician: [
+    'घर की कंसील्ड वायरिंग',
+    'MCB डिस्ट्रीब्यूशन बॉक्स',
+    'इन्वर्टर और बैटरी कनेक्शन',
+    'भारी उपकरणों का सॉकेट लगाना',
+    'शॉर्ट सर्किट फॉल्ट रिपेयर',
+    '3-फेज पावर कनेक्शन',
+    'LED और फॉल्स सीलिंग लाइट',
+    'कॉपर रॉड अर्थिंग फिटिंग',
+  ],
+  plumber: [
+    'CPVC और UPVC वाटर पाइपिंग',
+    'कंसील्ड बाथरूम डायवर्टर',
+    'छत की पानी की टंकी फिटिंग',
+    'नाली की रुकावट साफ़ करना',
+    'बेसिन और सेनेटरीवेयर फिटिंग',
+    'पानी की मोटर/पंप कनेक्शन',
+    'पाइपलाइन लीकेज की पहचान',
+    'गीज़र और हीटर कनेक्शन',
+  ],
+  carpenter: [
+    'मॉड्यूलर किचन कैबिनेट',
+    'वॉर्डरोब और दराज़ फिटिंग',
+    'दरवाजे की चौखट और लॉक लगाना',
+    'लेमिनेट और एज बैंडिंग',
+    'हाइड्रोलिक हिंज फिटिंग',
+    'लकड़ी का बेड व डाइनिंग टेबल',
+    'प्लाईवुड पार्टीशन दीवारें',
+    'सागवान लकड़ी की पॉलिश',
+  ],
+  mason: [
+    'ईंट और ब्लॉक की चिनाई',
+    'विट्रिफाइड व सेरेमिक टाइल',
+    'दीवार का चिकना प्लास्टर',
+    'कंक्रीट पिलर और फुटिंग',
+    'पत्थर की मजबूत नींव',
+    'बाथरूम वाटरप्रूफिंग',
+    'ग्रेनाइट किचन प्लेटफॉर्म',
+    'दरवाजे की चौखट ग्राउटिंग',
+  ],
+  painter: [
+    'वॉल पुट्टी और प्राइमर कोट',
+    'आंतरिक प्लास्टिक इमल्शन',
+    'बाहरी वेदरप्रूफ पेंट',
+    'लकड़ी की पीयू/मेलामाइन पॉलिश',
+    'लोहे की ग्रिल पर इनैमल पेंट',
+    'ज्यामितीय वॉल स्टेंसिल',
+    'टेक्सचर प्लास्टर फिनिश',
+    'दीवार की सीलन का उपचार',
+  ],
+  general: [
+    'निर्माण सामग्री लोडिंग-अनलोडिंग',
+    'कंक्रीट और मसाले की मिक्सिंग',
+    'साइट का मलबा व कचरा सफ़ाई',
+    'नींव और गड्ढे की खुदाई',
+    'मचान (पाड़) बाँधने में मदद',
+    'चिनाई टीम की सहायता',
+    'ईंटों की ढुलाई और तराई',
+    'गोदाम में वजन उठाना व रखना',
+  ],
+};
+
 const DEFAULT_PROFILE: UserWorkerProfile = {
   name: 'Sunil Shinde',
   trade: 'electrician',
@@ -122,6 +177,8 @@ const DEFAULT_PROFILE: UserWorkerProfile = {
 };
 
 export const ProfilePage: React.FC = () => {
+  const { t, language } = useLanguage();
+
   const [profile, setProfile] = useState<UserWorkerProfile>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -132,7 +189,7 @@ export const ProfilePage: React.FC = () => {
         }
       }
     } catch {
-      // ignore JSON parse error
+      // ignore
     }
     return DEFAULT_PROFILE;
   });
@@ -144,11 +201,17 @@ export const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  // Profile is already loaded synchronously during state initialization
-
+  const TRADE_OPTIONS: { id: Exclude<WorkerTrade, 'all'>; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: 'electrician', label: language === 'hi' ? 'इलेक्ट्रीशियन' : 'Electrician', icon: Zap },
+    { id: 'plumber', label: language === 'hi' ? 'प्लंबर' : 'Plumber', icon: Wrench },
+    { id: 'carpenter', label: language === 'hi' ? 'बढ़ई' : 'Carpenter', icon: Hammer },
+    { id: 'painter', label: language === 'hi' ? 'पेंटर' : 'Painter', icon: Paintbrush },
+    { id: 'mason', label: language === 'hi' ? 'राजमिस्त्री' : 'Mason', icon: HardHat },
+    { id: 'general', label: language === 'hi' ? 'सामान्य सहायक' : 'General Labour', icon: Briefcase },
+  ];
 
   const handleTradeChange = (trade: Exclude<WorkerTrade, 'all'>) => {
-    const tradeConfig = TRADE_OPTIONS.find((t) => t.id === trade);
+    const tradeConfig = TRADE_OPTIONS.find((tOpt) => tOpt.id === trade);
     setProfile((prev) => ({
       ...prev,
       trade,
@@ -204,25 +267,25 @@ export const ProfilePage: React.FC = () => {
     const errs: Record<string, string> = {};
 
     if (!profile.name.trim()) {
-      errs.name = 'Please enter your full name.';
+      errs.name = language === 'hi' ? 'कृपया अपना पूरा नाम लिखें।' : 'Please enter your full name.';
     }
     if (!profile.locality.trim()) {
-      errs.locality = 'Please enter your area or locality.';
+      errs.locality = language === 'hi' ? 'कृपया अपना इलाक़ा या मोहल्ला लिखें।' : 'Please enter your area or locality.';
     }
     if (!profile.city.trim()) {
-      errs.city = 'Please enter your city.';
+      errs.city = language === 'hi' ? 'कृपया अपना शहर लिखें।' : 'Please enter your city.';
     }
     if (!profile.payAmount || profile.payAmount <= 0 || isNaN(profile.payAmount)) {
-      errs.payAmount = 'Please enter a sensible expected pay amount (greater than ₹0).';
+      errs.payAmount = language === 'hi' ? 'कृपया सही मजदूरी भरें (0 से अधिक)।' : 'Please enter a sensible expected pay amount (greater than ₹0).';
     }
     if (profile.experienceYears < 0 || isNaN(profile.experienceYears)) {
-      errs.experienceYears = 'Years of experience must be 0 or more.';
+      errs.experienceYears = language === 'hi' ? 'अनुभव 0 या अधिक वर्ष होना चाहिए।' : 'Years of experience must be 0 or more.';
     }
     if (profile.skills.length === 0) {
-      errs.skills = 'Please select at least 1 key skill.';
+      errs.skills = language === 'hi' ? 'कम से कम 1 मुख्य हुनर ज़रूर चुनें।' : 'Please select at least 1 key skill.';
     }
     if (!profile.bio.trim() || profile.bio.trim().length < 15) {
-      errs.bio = 'Please add a brief description (at least 15 characters) about your work.';
+      errs.bio = language === 'hi' ? 'कृपया अपने काम के बारे में कम से कम 15 अक्षर का परिचय लिखें।' : 'Please add a brief description (at least 15 characters) about your work.';
     }
 
     setErrors(errs);
@@ -246,7 +309,9 @@ export const ProfilePage: React.FC = () => {
       setProfile(updatedProfile);
       setIsSaved(true);
       setSaveSuccessMessage(
-        `Profile saved successfully to your browser storage at ${updatedProfile.lastSavedAt}.`
+        language === 'hi'
+          ? `जानकारी सफलतापूर्वक आपके ब्राउज़र में सेव हो गई (${updatedProfile.lastSavedAt})`
+          : `Profile saved successfully to your browser storage at ${updatedProfile.lastSavedAt}.`
       );
       setTimeout(() => {
         setSaveSuccessMessage(null);
@@ -254,7 +319,7 @@ export const ProfilePage: React.FC = () => {
     } catch {
       setErrors((prev) => ({
         ...prev,
-        submit: 'Could not save profile to browser storage. Check available storage.',
+        submit: 'Could not save profile to browser storage.',
       }));
     }
   };
@@ -266,7 +331,7 @@ export const ProfilePage: React.FC = () => {
       setIsSaved(true);
       setErrors({});
       setShowResetConfirm(false);
-      setSaveSuccessMessage('Profile reset to demonstration starter values.');
+      setSaveSuccessMessage(language === 'hi' ? 'प्रोफ़ाइल शुरुआती मानों पर रीसेट हो गई।' : 'Profile reset to demonstration starter values.');
       setTimeout(() => {
         setSaveSuccessMessage(null);
       }, 4000);
@@ -275,7 +340,6 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  // Compute initials for display
   const getInitials = (fullName: string): string => {
     const parts = fullName.trim().split(/\s+/);
     if (parts.length === 0 || !parts[0]) return 'SA';
@@ -283,7 +347,9 @@ export const ProfilePage: React.FC = () => {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const activePresets = TRADE_SKILL_PRESETS[profile.trade] || [];
+  const activePresets = language === 'hi'
+    ? TRADE_SKILL_PRESETS_HI[profile.trade] || []
+    : TRADE_SKILL_PRESETS_EN[profile.trade] || [];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#111827]">
@@ -296,12 +362,12 @@ export const ProfilePage: React.FC = () => {
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#334155] hover:text-[#0F766E] transition-colors p-1 rounded-md"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Directory</span>
+              <span>{t('common.backDirectory')}</span>
             </Link>
             <span className="text-[#E2E8F0]">•</span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#DBEAFE] text-[#0F766E]">
-              <Sparkles className="w-3 h-3 text-[#14B8A6]" />
-              Worker Profile Builder
+              <Sparkles className="w-3.5 h-3.5 text-[#14B8A6]" />
+              {t('nav.profile')}
             </span>
           </div>
 
@@ -310,12 +376,12 @@ export const ProfilePage: React.FC = () => {
             {isSaved ? (
               <span className="inline-flex items-center gap-1 text-xs text-[#0F766E] font-medium bg-[#F0FDF4] border border-[#BBF7D0] px-2.5 py-1 rounded-full">
                 <Check className="w-3.5 h-3.5" />
-                <span>Saved Locally</span>
+                <span>{t('profile.status.saved')}</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-xs text-[#854D0E] font-medium bg-[#FEF9C3] border border-[#FEF08A] px-2.5 py-1 rounded-full">
                 <Pencil className="w-3.5 h-3.5" />
-                <span>Unsaved changes</span>
+                <span>{t('profile.status.unsaved')}</span>
               </span>
             )}
 
@@ -325,7 +391,7 @@ export const ProfilePage: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] active:scale-[0.98] transition-all shadow-sm focus-visible:outline-2 focus-visible:outline-[#0F766E]"
             >
               <Save className="w-4 h-4" />
-              <span>Save Profile</span>
+              <span>{t('profile.btn.save')}</span>
             </button>
           </div>
         </div>
@@ -335,10 +401,10 @@ export const ProfilePage: React.FC = () => {
         {/* Header Hero */}
         <div className="max-w-3xl mb-8">
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#111827] tracking-tight">
-            Your Worker Profile Card
+            {t('profile.hero.title')}
           </h1>
           <p className="mt-2 text-base text-[#334155] leading-relaxed">
-            Create or update your digital work card. Set your daily rates, highlight specific skills, and announce your current availability to local employers.
+            {t('profile.hero.subtitle')}
           </p>
         </div>
 
@@ -380,7 +446,7 @@ export const ProfilePage: React.FC = () => {
             }`}
           >
             <Pencil className="w-3.5 h-3.5" />
-            <span>Edit Profile Details</span>
+            <span>{t('profile.tab.edit')}</span>
           </button>
           <button
             type="button"
@@ -392,7 +458,7 @@ export const ProfilePage: React.FC = () => {
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Live Card Preview</span>
+            <span>{t('profile.tab.preview')}</span>
           </button>
         </div>
 
@@ -410,16 +476,16 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] mb-5">
                   <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
                     <User className="w-4 h-4 text-[#0F766E]" />
-                    <span>Basic Details & Trade</span>
+                    <span>{t('profile.step1.title')}</span>
                   </h2>
-                  <span className="text-xs text-[#64748B] font-medium">Step 1 of 4</span>
+                  <span className="text-xs text-[#64748B] font-medium">{t('profile.step1.step')}</span>
                 </div>
 
                 <div className="space-y-5">
                   {/* Full Name */}
                   <div>
                     <label htmlFor="worker-name" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                      Full Name <span className="text-rose-500">*</span>
+                      {t('profile.name.label')} <span className="text-rose-500">*</span>
                     </label>
                     <input
                       id="worker-name"
@@ -430,7 +496,7 @@ export const ProfilePage: React.FC = () => {
                         setIsSaved(false);
                         if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
                       }}
-                      placeholder="e.g. Rameshwar Jadhav"
+                      placeholder={t('profile.name.placeholder')}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-[#111827] bg-[#F8FAFC] focus:bg-white focus:outline-none transition-colors ${
                         errors.name
                           ? 'border-rose-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-500'
@@ -448,7 +514,7 @@ export const ProfilePage: React.FC = () => {
                   {/* Main Trade Category Selection */}
                   <div>
                     <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-2">
-                      Main Trade Category <span className="text-rose-500">*</span>
+                      {t('profile.trade.label')} <span className="text-rose-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {TRADE_OPTIONS.map((trade) => {
@@ -482,7 +548,7 @@ export const ProfilePage: React.FC = () => {
                   {/* Years of Experience */}
                   <div>
                     <label htmlFor="worker-exp" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                      Years of Trade Experience <span className="text-rose-500">*</span>
+                      {t('profile.exp.label')} <span className="text-rose-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
                       <input
@@ -508,7 +574,7 @@ export const ProfilePage: React.FC = () => {
                             : 'border-[#CBD5E1] focus:border-[#0F766E]'
                         }`}
                       />
-                      <span className="text-xs text-[#64748B]">years in this trade</span>
+                      <span className="text-xs text-[#64748B]">{t('profile.exp.unit')}</span>
                     </div>
                     {errors.experienceYears && (
                       <p className="mt-1 text-xs text-rose-500 flex items-center gap-1">
@@ -525,9 +591,9 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] mb-5">
                   <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-[#0F766E]" />
-                    <span>Locality & Availability</span>
+                    <span>{t('profile.step2.title')}</span>
                   </h2>
-                  <span className="text-xs text-[#64748B] font-medium">Step 2 of 4</span>
+                  <span className="text-xs text-[#64748B] font-medium">{t('profile.step2.step')}</span>
                 </div>
 
                 <div className="space-y-5">
@@ -535,7 +601,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="worker-locality" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                        Area / Locality <span className="text-rose-500">*</span>
+                        {t('profile.locality.label')} <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="worker-locality"
@@ -546,7 +612,7 @@ export const ProfilePage: React.FC = () => {
                           setIsSaved(false);
                           if (errors.locality) setErrors((prev) => ({ ...prev, locality: '' }));
                         }}
-                        placeholder="e.g. Kothrud or Koramangala"
+                        placeholder={t('profile.locality.placeholder')}
                         className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-[#111827] bg-[#F8FAFC] focus:bg-white focus:outline-none transition-colors ${
                           errors.locality ? 'border-rose-400' : 'border-[#CBD5E1] focus:border-[#0F766E]'
                         }`}
@@ -561,7 +627,7 @@ export const ProfilePage: React.FC = () => {
 
                     <div>
                       <label htmlFor="worker-city" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                        City <span className="text-rose-500">*</span>
+                        {t('profile.city.label')} <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="worker-city"
@@ -572,7 +638,7 @@ export const ProfilePage: React.FC = () => {
                           setIsSaved(false);
                           if (errors.city) setErrors((prev) => ({ ...prev, city: '' }));
                         }}
-                        placeholder="e.g. Pune, Bengaluru, Mumbai"
+                        placeholder={t('profile.city.placeholder')}
                         className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-[#111827] bg-[#F8FAFC] focus:bg-white focus:outline-none transition-colors ${
                           errors.city ? 'border-rose-400' : 'border-[#CBD5E1] focus:border-[#0F766E]'
                         }`}
@@ -589,28 +655,28 @@ export const ProfilePage: React.FC = () => {
                   {/* Availability Status */}
                   <div>
                     <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-2">
-                      Current Work Availability <span className="text-rose-500">*</span>
+                      {t('profile.avail.label')} <span className="text-rose-500">*</span>
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {[
                         {
                           id: 'today' as WorkerAvailabilityStatus,
-                          label: 'Available Today',
-                          desc: 'Ready for emergency or same-day shifts',
+                          label: t('profile.avail.todayTitle'),
+                          desc: t('profile.avail.todayDesc'),
                           activeColor: 'border-[#0F766E] bg-[#F0FDFA] text-[#0F766E] ring-1 ring-[#0F766E]',
                           badgeColor: 'bg-[#14B8A6]',
                         },
                         {
                           id: 'this_week' as WorkerAvailabilityStatus,
-                          label: 'Available This Week',
-                          desc: 'Open for projects starting soon',
+                          label: t('profile.avail.weekTitle'),
+                          desc: t('profile.avail.weekDesc'),
                           activeColor: 'border-[#0F766E] bg-[#F0FDFA] text-[#0F766E] ring-1 ring-[#0F766E]',
                           badgeColor: 'bg-[#0F766E]',
                         },
                         {
                           id: 'not_available' as WorkerAvailabilityStatus,
-                          label: 'Not Available',
-                          desc: 'Currently occupied on a site',
+                          label: t('profile.avail.notTitle'),
+                          desc: t('profile.avail.notDesc'),
                           activeColor: 'border-[#64748B] bg-[#F1F5F9] text-[#334155] ring-1 ring-[#64748B]',
                           badgeColor: 'bg-[#94A3B8]',
                         },
@@ -644,7 +710,7 @@ export const ProfilePage: React.FC = () => {
                   {/* Expected Pay Rate */}
                   <div>
                     <label htmlFor="worker-pay" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                      Expected Pay Rate <span className="text-rose-500">*</span>
+                      {t('profile.pay.label')} <span className="text-rose-500">*</span>
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative">
@@ -687,7 +753,7 @@ export const ProfilePage: React.FC = () => {
                               : 'text-[#334155] hover:text-[#111827]'
                           }`}
                         >
-                          Per Day (दैनिक)
+                          {t('profile.payUnit.day')}
                         </button>
                         <button
                           type="button"
@@ -701,7 +767,7 @@ export const ProfilePage: React.FC = () => {
                               : 'text-[#334155] hover:text-[#111827]'
                           }`}
                         >
-                          Per Job / Contract
+                          {t('profile.payUnit.job')}
                         </button>
                       </div>
                     </div>
@@ -721,13 +787,13 @@ export const ProfilePage: React.FC = () => {
                   <div>
                     <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-[#0F766E]" />
-                      <span>Skills & Proficiencies</span>
+                      <span>{t('profile.step3.title')}</span>
                     </h2>
                     <p className="text-xs text-[#64748B] mt-0.5">
-                      Select common skills for {profile.tradeLabel} or add your own.
+                      {t('profile.step3.desc')}
                     </p>
                   </div>
-                  <span className="text-xs text-[#64748B] font-medium">Step 3 of 4</span>
+                  <span className="text-xs text-[#64748B] font-medium">{t('profile.step3.step')}</span>
                 </div>
 
                 <div className="space-y-5">
@@ -735,13 +801,13 @@ export const ProfilePage: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-bold text-[#111827] uppercase tracking-wider">
-                        Your Selected Skills ({profile.skills.length})
+                        {t('profile.skills.selected')} ({profile.skills.length})
                       </span>
                     </div>
 
                     {profile.skills.length === 0 ? (
                       <div className="p-4 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] text-center text-xs text-[#64748B]">
-                        No skills selected yet. Click from the suggestions below or type a custom skill.
+                        {t('profile.skills.empty')}
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2 p-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC]">
@@ -775,7 +841,7 @@ export const ProfilePage: React.FC = () => {
                   {/* Trade Preset Suggestions */}
                   <div>
                     <span className="block text-xs font-semibold text-[#334155] mb-2">
-                      Suggested for {profile.tradeLabel}:
+                      {t('profile.skills.suggested')} {profile.tradeLabel}:
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {activePresets.map((preset) => {
@@ -804,7 +870,7 @@ export const ProfilePage: React.FC = () => {
                   {/* Add Custom Skill Input */}
                   <div className="pt-2">
                     <label htmlFor="custom-skill" className="block text-xs font-semibold text-[#334155] mb-1.5">
-                      Add Other Specific Skill:
+                      {t('profile.skills.customLabel')}
                     </label>
                     <div className="flex gap-2">
                       <input
@@ -818,7 +884,7 @@ export const ProfilePage: React.FC = () => {
                             handleAddCustomSkill();
                           }
                         }}
-                        placeholder="e.g. Copper Braze Welding, Hydraulic Testing"
+                        placeholder={t('profile.skills.customPlaceholder')}
                         className="flex-1 px-3.5 py-2 rounded-xl border border-[#CBD5E1] text-xs sm:text-sm text-[#111827] bg-[#F8FAFC] focus:bg-white focus:outline-none focus:border-[#0F766E]"
                       />
                       <button
@@ -827,7 +893,7 @@ export const ProfilePage: React.FC = () => {
                         disabled={!customSkillInput.trim()}
                         className="px-4 py-2 rounded-xl bg-[#0F766E] text-white text-xs font-semibold hover:bg-[#115E59] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
                       >
-                        Add Skill
+                        {t('profile.skills.addBtn')}
                       </button>
                     </div>
                   </div>
@@ -839,15 +905,15 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] mb-5">
                   <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-[#0F766E]" />
-                    <span>Work Experience & Introduction</span>
+                    <span>{t('profile.step4.title')}</span>
                   </h2>
-                  <span className="text-xs text-[#64748B] font-medium">Step 4 of 4</span>
+                  <span className="text-xs text-[#64748B] font-medium">{t('profile.step4.step')}</span>
                 </div>
 
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="worker-bio" className="block text-xs font-bold text-[#111827] uppercase tracking-wider mb-1.5">
-                      Short Introduction / Site Experience <span className="text-rose-500">*</span>
+                      {t('profile.bio.label')} <span className="text-rose-500">*</span>
                     </label>
                     <textarea
                       id="worker-bio"
@@ -858,14 +924,14 @@ export const ProfilePage: React.FC = () => {
                         setIsSaved(false);
                         if (errors.bio) setErrors((prev) => ({ ...prev, bio: '' }));
                       }}
-                      placeholder="Briefly describe what kind of residential or commercial jobs you usually take, key tools you own, and locations you work in..."
+                      placeholder={t('profile.bio.placeholder')}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-[#111827] bg-[#F8FAFC] focus:bg-white focus:outline-none transition-colors ${
                         errors.bio ? 'border-rose-400' : 'border-[#CBD5E1] focus:border-[#0F766E]'
                       }`}
                     />
                     <div className="flex items-center justify-between mt-1 text-xs text-[#64748B]">
-                      <span>Keep it direct and easy for contractors to understand.</span>
-                      <span>{profile.bio.length} characters</span>
+                      <span>{language === 'hi' ? 'सीधा और साफ़ लिखें ताकि काम देने वाले आसानी से समझ सकें।' : 'Keep it direct and easy for contractors to understand.'}</span>
+                      <span>{profile.bio.length} {language === 'hi' ? 'अक्षर' : 'chars'}</span>
                     </div>
                     {errors.bio && (
                       <p className="mt-1 text-xs text-rose-500 flex items-center gap-1">
@@ -885,7 +951,7 @@ export const ProfilePage: React.FC = () => {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#CBD5E1] text-xs sm:text-sm font-semibold text-[#334155] hover:bg-white hover:text-[#111827] transition-colors"
                 >
                   <RotateCcw className="w-4 h-4 text-[#64748B]" />
-                  <span>Reset to Starter Profile</span>
+                  <span>{t('profile.btn.reset')}</span>
                 </button>
 
                 <div className="w-full sm:w-auto flex items-center gap-3">
@@ -894,7 +960,7 @@ export const ProfilePage: React.FC = () => {
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] active:scale-[0.98] transition-all shadow-sm"
                   >
                     <Save className="w-4 h-4" />
-                    <span>Save Worker Profile</span>
+                    <span>{t('profile.btn.save')}</span>
                   </button>
                 </div>
               </div>
@@ -911,9 +977,9 @@ export const ProfilePage: React.FC = () => {
                     <div className="flex items-start gap-2.5">
                       <AlertCircle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-bold">Discard changes and reset to demonstration defaults?</p>
+                        <p className="text-sm font-bold">{t('profile.resetConfirm.title')}</p>
                         <p className="text-xs text-[#B45309] mt-0.5">
-                          This will reset your local profile details back to the original starter sample profile.
+                          {language === 'hi' ? 'यह आपके सभी बदलाव हटाकर मूल नमूना प्रोफ़ाइल पर वापस ले जाएगा।' : 'This will reset your local profile details back to the original starter sample profile.'}
                         </p>
                       </div>
                     </div>
@@ -923,14 +989,14 @@ export const ProfilePage: React.FC = () => {
                         onClick={handleResetToDefaults}
                         className="px-3 py-1.5 rounded-lg bg-[#D97706] text-white text-xs font-semibold hover:bg-[#B45309] transition-colors"
                       >
-                        Yes, Reset Profile
+                        {t('profile.resetConfirm.yes')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowResetConfirm(false)}
                         className="px-3 py-1.5 rounded-lg border border-[#FDE68A] bg-white text-xs font-semibold text-[#78350F] hover:bg-[#FFFBEB] transition-colors"
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                     </div>
                   </motion.div>
@@ -949,9 +1015,9 @@ export const ProfilePage: React.FC = () => {
               <div className="flex items-center justify-between px-1">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#0F766E] flex items-center gap-1.5">
                   <Eye className="w-3.5 h-3.5" />
-                  <span>Live Profile Card Preview</span>
+                  <span>{t('profile.preview.title')}</span>
                 </span>
-                <span className="text-[11px] text-[#64748B] font-medium">Updates in Real-Time</span>
+                <span className="text-[11px] text-[#64748B] font-medium">{language === 'hi' ? 'तुरंत अपडेट होता है' : 'Updates in Real-Time'}</span>
               </div>
 
               {/* The Worker Card Component */}
@@ -960,26 +1026,26 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 pb-5 border-b border-[#F1F5F9]">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#0F766E] text-xs font-bold">
                     <Shield className="w-3.5 h-3.5 text-[#14B8A6]" />
-                    <span>Sahayak Artisan Card</span>
+                    <span>{t('profile.preview.badge')}</span>
                   </span>
 
                   {/* Availability Badge */}
                   {profile.availability === 'today' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0] text-xs font-semibold">
                       <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-                      <span>Available Today</span>
+                      <span>{t('common.today')}</span>
                     </span>
                   )}
                   {profile.availability === 'this_week' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4] text-xs font-semibold">
                       <span className="w-2 h-2 rounded-full bg-[#0F766E]" />
-                      <span>Available This Week</span>
+                      <span>{t('common.thisWeek')}</span>
                     </span>
                   )}
                   {profile.availability === 'not_available' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] text-xs font-semibold">
                       <span className="w-2 h-2 rounded-full bg-[#94A3B8]" />
-                      <span>Not Available</span>
+                      <span>{t('common.notAvailable')}</span>
                     </span>
                   )}
                 </div>
@@ -991,15 +1057,15 @@ export const ProfilePage: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#111827] truncate">
-                      {profile.name || 'Your Full Name'}
+                      {profile.name || (language === 'hi' ? 'आपका पूरा नाम' : 'Your Full Name')}
                     </h3>
                     <p className="text-xs sm:text-sm font-semibold text-[#0F766E] mt-0.5">
-                      {profile.tradeLabel || 'Skilled Artisan'} • {profile.experienceYears || 0} Years Experience
+                      {profile.tradeLabel || 'Skilled Artisan'} • {profile.experienceYears || 0} {t('common.years')} {t('common.experience')}
                     </p>
                     <div className="flex items-center gap-1.5 text-xs text-[#64748B] mt-1.5">
                       <MapPin className="w-3.5 h-3.5 text-[#0F766E] shrink-0" />
                       <span className="truncate">
-                        {profile.locality || 'Locality'}, {profile.city || 'City'}
+                        {profile.locality || t('common.location')}, {profile.city || ''}
                       </span>
                     </div>
                   </div>
@@ -1009,22 +1075,22 @@ export const ProfilePage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3 py-4 border-b border-[#F1F5F9] text-center">
                   <div className="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
                     <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block">
-                      Expected Rate
+                      {t('profile.preview.expectedRate')}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#0F766E] font-serif mt-0.5 block">
                       ₹{profile.payAmount.toLocaleString('en-IN')}{' '}
                       <span className="text-xs font-normal text-[#334155]">
-                        / {profile.payUnit === 'per_day' ? 'Day' : 'Job'}
+                        / {profile.payUnit === 'per_day' ? t('common.day') : t('common.job')}
                       </span>
                     </span>
                   </div>
 
                   <div className="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
                     <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block">
-                      Experience
+                      {t('common.experience')}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-[#111827] font-serif mt-0.5 block">
-                      {profile.experienceYears}+ Years
+                      {profile.experienceYears}+ {t('common.years')}
                     </span>
                   </div>
                 </div>
@@ -1032,10 +1098,10 @@ export const ProfilePage: React.FC = () => {
                 {/* Selected Skills in Live Preview */}
                 <div className="py-4 border-b border-[#F1F5F9]">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155] block mb-2">
-                    Key Trade Skills ({profile.skills.length})
+                    {t('profile.preview.skillsTitle')} ({profile.skills.length})
                   </span>
                   {profile.skills.length === 0 ? (
-                    <p className="text-xs text-[#94A3B8] italic">No skills selected yet</p>
+                    <p className="text-xs text-[#94A3B8] italic">{t('profile.skills.empty')}</p>
                   ) : (
                     <div className="flex flex-wrap gap-1.5">
                       {profile.skills.map((skill) => (
@@ -1053,10 +1119,10 @@ export const ProfilePage: React.FC = () => {
                 {/* Bio / Work Description */}
                 <div className="pt-4 pb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155] block mb-1.5">
-                    About & Work History
+                    {t('profile.preview.bioTitle')}
                   </span>
                   <p className="text-xs sm:text-sm text-[#334155] leading-relaxed line-clamp-4">
-                    {profile.bio || 'Your short professional introduction will appear here.'}
+                    {profile.bio || (language === 'hi' ? 'आपका संक्षिप्त परिचय यहाँ दिखेगा।' : 'Your short professional introduction will appear here.')}
                   </p>
                 </div>
 
@@ -1064,9 +1130,8 @@ export const ProfilePage: React.FC = () => {
                 <div className="mt-5 pt-4 border-t border-[#F1F5F9] flex items-center justify-between text-[11px] text-[#64748B]">
                   <span className="flex items-center gap-1 text-[#0F766E] font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Demonstration Profile</span>
+                    <span>{t('profile.preview.demoLabel')}</span>
                   </span>
-                  <span>Self-declared profile</span>
                 </div>
               </div>
 
@@ -1074,10 +1139,10 @@ export const ProfilePage: React.FC = () => {
               <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 text-xs text-[#64748B]">
                 <div className="flex items-center gap-1.5 font-bold text-[#111827]">
                   <Clock className="w-4 h-4 text-[#0F766E]" />
-                  <span>Prototype Storage Notice</span>
+                  <span>{t('profile.disclaimer.title')}</span>
                 </div>
                 <p className="leading-relaxed">
-                  This profile builder runs entirely on your device. When you click <strong>Save Profile</strong>, data is stored in your browser&apos;s localStorage (key: <code className="text-[#0F766E] bg-white px-1 py-0.5 rounded border border-[#E2E8F0]">sahayak_worker_profile</code>). No remote database or real notification is used.
+                  {t('profile.disclaimer.desc')}
                 </p>
               </div>
             </div>
@@ -1087,3 +1152,5 @@ export const ProfilePage: React.FC = () => {
     </div>
   );
 };
+
+export default ProfilePage;

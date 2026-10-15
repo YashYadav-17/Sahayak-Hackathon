@@ -2,8 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Sparkles, ShieldCheck, Banknote, Users } from 'lucide-react';
 import { SahayakScrollStory } from '../components/animation/SahayakScrollStory';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const MotionLabPage: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#111827]">
       {/* Motion Lab Developer Preview Banner */}
@@ -17,18 +20,18 @@ export const MotionLabPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#14B8A6] font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Live Site</span>
+            <span>{t('motionLab.return')}</span>
           </Link>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse" />
             <span className="font-mono font-bold tracking-wider text-slate-200">
-              MOTION LAB // SEQUENCE PREVIEW
+              {t('motionLab.toolbar')}
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-          <span className="hidden sm:inline">LOCKED PALETTE:</span>
+          <span className="hidden sm:inline">{t('motionLab.lockedPalette')}</span>
           <span className="w-3 h-3 rounded-full bg-[#111827] border border-slate-600" title="Deep Ink #111827" />
           <span className="w-3 h-3 rounded-full bg-[#F8FAFC] border border-slate-400" title="Soft Canvas #F8FAFC" />
           <span className="w-3 h-3 rounded-full bg-[#0F766E]" title="Primary Teal #0F766E" />
@@ -85,7 +88,7 @@ export const MotionLabPage: React.FC = () => {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-sm font-semibold transition-colors shadow-lg"
             >
               <ArrowLeft className="w-4 h-4 text-[#14B8A6]" />
-              <span>Back to Sahayak Live Home</span>
+              <span>{t('common.backHome')}</span>
             </Link>
           </div>
         </div>

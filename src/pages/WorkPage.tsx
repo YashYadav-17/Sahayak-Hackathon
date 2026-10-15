@@ -24,12 +24,16 @@ import {
   Info,
 } from 'lucide-react';
 import { SAMPLE_JOBS } from '../data/sampleJobs';
-import type { Job, TradeCategory, DurationFilter } from '../types/job';
+import type { TradeCategory, DurationFilter } from '../types/job';
+import { useLanguage } from '../i18n/LanguageContext';
+import { getLocalizedJob } from '../i18n/translations';
 
 const STORAGE_SAVED_KEY = 'sahayak_saved_jobs';
 const STORAGE_INTERESTED_KEY = 'sahayak_interested_jobs';
 
 export const WorkPage: React.FC = () => {
+  const { t, language } = useLanguage();
+
   // State: Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState<string>('all');
@@ -57,12 +61,23 @@ export const WorkPage: React.FC = () => {
   });
 
   // State: Selected Job for Detail Modal / Slide-over
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   // State: Report Listing Dialog
   const [isReporting, setIsReporting] = useState(false);
-  const [reportReason, setReportReason] = useState('Inaccurate pay rate');
+  const [reportReason, setReportReason] = useState<string>('work.job.reportReason1');
   const [reportSubmitted, setReportSubmitted] = useState(false);
+
+  // Localized Jobs list
+  const localizedJobs = useMemo(() => {
+    return SAMPLE_JOBS.map((job) => getLocalizedJob(job, language));
+  }, [language]);
+
+  const selectedJob = useMemo(() => {
+    if (!selectedJobId) return null;
+    const raw = SAMPLE_JOBS.find((j) => j.id === selectedJobId);
+    return raw ? getLocalizedJob(raw, language) : null;
+  }, [selectedJobId, language]);
 
   // Sync saved jobs with localStorage
   useEffect(() => {
@@ -86,7 +101,7 @@ export const WorkPage: React.FC = () => {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSelectedJob(null);
+        setSelectedJobId(null);
         setIsReporting(false);
       }
     },
@@ -94,7 +109,7 @@ export const WorkPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (selectedJob) {
+    if (selectedJobId) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     } else {
@@ -104,7 +119,7 @@ export const WorkPage: React.FC = () => {
       document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedJob, handleKeyDown]);
+  }, [selectedJobId, handleKeyDown]);
 
   // Toggle Save Job
   const toggleSaveJob = (id: string, e?: React.MouseEvent) => {
@@ -131,9 +146,9 @@ export const WorkPage: React.FC = () => {
     }, 2200);
   };
 
-  // Filter Logic
+  // Filter Logic over Localized Jobs
   const filteredJobs = useMemo(() => {
-    return SAMPLE_JOBS.filter((job) => {
+    return localizedJobs.filter((job) => {
       // 1. Text Search (trade, title, locality, description)
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
@@ -168,12 +183,13 @@ export const WorkPage: React.FC = () => {
 
       return true;
     });
-  }, [searchQuery, cityFilter, tradeFilter, durationFilter, showSavedOnly, savedJobIds]);
+  }, [localizedJobs, searchQuery, cityFilter, tradeFilter, durationFilter, showSavedOnly, savedJobIds]);
 
   // Featured Job
   const featuredJob = useMemo(() => {
-    return SAMPLE_JOBS.find((j) => j.isFeatured) || SAMPLE_JOBS[0];
-  }, []);
+    const raw = SAMPLE_JOBS.find((j) => j.isFeatured) || SAMPLE_JOBS[0];
+    return getLocalizedJob(raw, language);
+  }, [language]);
 
   const resetAllFilters = () => {
     setSearchQuery('');
@@ -182,6 +198,22 @@ export const WorkPage: React.FC = () => {
     setDurationFilter('all');
     setShowSavedOnly(false);
   };
+
+  const tradePills: { id: TradeCategory; label: string }[] = [
+    { id: 'all', label: t('work.filters.allTrades') },
+    { id: 'masonry', label: language === 'hi' ? 'राजमिस्त्री' : 'Masonry' },
+    { id: 'carpentry', label: language === 'hi' ? 'बढ़ई' : 'Carpentry' },
+    { id: 'painting', label: language === 'hi' ? 'पेंटर' : 'Painting' },
+    { id: 'electrical', label: language === 'hi' ? 'इलेक्ट्रीशियन' : 'Electrical' },
+    { id: 'plumbing', label: language === 'hi' ? 'प्लंबर' : 'Plumbing' },
+    { id: 'general', label: language === 'hi' ? 'सामान्य सहायक' : 'General Help' },
+  ];
+
+  const durationPills: { id: DurationFilter; label: string }[] = [
+    { id: 'all', label: t('work.filters.allDurations') },
+    { id: 'daily', label: t('work.filters.daily') },
+    { id: 'multi_day', label: t('work.filters.multiDay') },
+  ];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#111827]">
@@ -194,20 +226,20 @@ export const WorkPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#14B8A6] font-semibold mb-6 transition-colors duration-150"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <span>{t('common.backHome')}</span>
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/90 text-[#14B8A6] text-xs font-mono font-semibold mb-3 border border-slate-700">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>DIRECT WORK MARKETPLACE • ZERO COMMISSION</span>
+                <span>{t('home.hero.scene3.pill')}</span>
               </div>
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-                Find work. Know the pay.
+                {t('work.hero.title')}
               </h1>
               <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed">
-                Clear day rates, exact site locations, and direct employer agreements without middleman cuts.
+                {t('work.hero.subtitle')}
               </p>
             </div>
 
@@ -223,7 +255,7 @@ export const WorkPage: React.FC = () => {
                 }`}
               >
                 <Bookmark className={`w-4 h-4 ${showSavedOnly ? 'fill-current' : ''}`} />
-                <span>Saved Jobs ({savedJobIds.length})</span>
+                <span>{t('work.job.savedJobsTitle')} ({savedJobIds.length})</span>
               </button>
             </div>
           </div>
@@ -241,9 +273,9 @@ export const WorkPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search skill or trade (e.g. Mason, Carpenter, Painting, Tile)..."
+              placeholder={t('work.search.placeholder')}
               className="w-full bg-transparent text-sm text-[#111827] placeholder-slate-400 focus:outline-none"
-              aria-label="Search jobs by trade or skill"
+              aria-label="Search jobs"
             />
             {searchQuery && (
               <button
@@ -264,13 +296,13 @@ export const WorkPage: React.FC = () => {
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
               className="w-full bg-transparent text-sm text-[#111827] focus:outline-none cursor-pointer"
-              aria-label="Filter by locality city"
+              aria-label="Filter by city"
             >
-              <option value="all">All Cities &amp; Localities</option>
-              <option value="Pune">Pune (Kothrud, Hadapsar, Viman Nagar)</option>
-              <option value="Mumbai">Mumbai (Andheri West)</option>
-              <option value="Bengaluru">Bengaluru (Koramangala, Indiranagar)</option>
-              <option value="Thane">Thane (Bhiwandi)</option>
+              <option value="all">{language === 'hi' ? 'सभी शहर और इलाक़े' : 'All Cities & Localities'}</option>
+              <option value="Pune">Pune (कोथरूड, हड़पसर, विमान नगर)</option>
+              <option value="Mumbai">Mumbai (अंधेरी वेस्ट)</option>
+              <option value="Bengaluru">Bengaluru (कोरमंगला, इंदिरानगर)</option>
+              <option value="Thane">Thane (भिवंडी)</option>
             </select>
           </div>
         </div>
@@ -279,46 +311,33 @@ export const WorkPage: React.FC = () => {
         <div className="space-y-3.5">
           {/* Trade Pills */}
           <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Trade categories">
-            <span className="text-xs font-semibold text-slate-500 mr-1 hidden sm:inline">Trade:</span>
-            {[
-              { id: 'all', label: 'All Trades' },
-              { id: 'masonry', label: 'Masonry' },
-              { id: 'carpentry', label: 'Carpentry' },
-              { id: 'painting', label: 'Painting' },
-              { id: 'electrical', label: 'Electrical' },
-              { id: 'plumbing', label: 'Plumbing' },
-              { id: 'general', label: 'General Help' },
-            ].map((t) => (
+            <span className="text-xs font-semibold text-slate-500 mr-1 hidden sm:inline">{t('work.filters.trade')}:</span>
+            {tradePills.map((pill) => (
               <button
-                key={t.id}
+                key={pill.id}
                 type="button"
                 role="tab"
-                aria-selected={tradeFilter === t.id}
-                onClick={() => setTradeFilter(t.id as TradeCategory)}
+                aria-selected={tradeFilter === pill.id}
+                onClick={() => setTradeFilter(pill.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                  tradeFilter === t.id
+                  tradeFilter === pill.id
                     ? 'bg-[#0F766E] text-white shadow-xs'
                     : 'bg-white border border-[#E2E8F0] text-slate-700 hover:bg-slate-100 hover:border-slate-300'
                 }`}
               >
-                {t.label}
+                {pill.label}
               </button>
             ))}
           </div>
 
           {/* Duration Pills */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 mr-1 hidden sm:inline">Duration:</span>
-            {[
-              { id: 'all', label: 'All Durations' },
-              { id: 'daily', label: 'Daily Shift' },
-              { id: 'multi_day', label: 'Multi-Day (Fixed)' },
-              { id: 'ongoing', label: 'Ongoing Work' },
-            ].map((d) => (
+            <span className="text-xs font-semibold text-slate-500 mr-1 hidden sm:inline">{t('work.filters.duration')}:</span>
+            {durationPills.map((d) => (
               <button
                 key={d.id}
                 type="button"
-                onClick={() => setDurationFilter(d.id as DurationFilter)}
+                onClick={() => setDurationFilter(d.id)}
                 className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer ${
                   durationFilter === d.id
                     ? 'bg-[#1E293B] text-white border border-slate-700 font-semibold'
@@ -336,7 +355,7 @@ export const WorkPage: React.FC = () => {
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#0F766E] hover:text-[#115E59] hover:bg-[#0F766E]/10 ml-auto transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset Filters</span>
+                <span>{t('work.results.resetBtn')}</span>
               </button>
             )}
           </div>
@@ -353,7 +372,7 @@ export const WorkPage: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0F766E] text-white text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5 text-[#14B8A6]" />
-                Featured Sample Showcase
+                {t('work.job.featured')}
               </span>
               <span className="text-xs font-mono text-slate-400">
                 Sample ID: {featuredJob.id}
@@ -388,23 +407,23 @@ export const WorkPage: React.FC = () => {
               <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800">
                 <div>
                   <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-0.5">
-                    Offered Day Rate
+                    {t('common.rate')}
                   </div>
                   <div className="font-serif text-3xl font-bold text-[#14B8A6]">
-                    {featuredJob.payFormatted}
+                    ₹{featuredJob.payAmount.toLocaleString('en-IN')} / {t('common.day')}
                   </div>
                   <div className="text-[11px] text-slate-400 mt-1">
-                    Direct UPI or cash at end of day
+                    {featuredJob.paymentTiming}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <button
                     type="button"
-                    onClick={() => setSelectedJob(featuredJob)}
+                    onClick={() => setSelectedJobId(featuredJob.id)}
                     className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-xs font-bold transition-colors duration-150 shadow-sm"
                   >
-                    View Details
+                    {t('work.job.viewDetails')}
                   </button>
                   <button
                     type="button"
@@ -426,17 +445,17 @@ export const WorkPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#E2E8F0]">
           <div className="text-xs sm:text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span>
-              Showing <strong className="text-[#0F766E]">{filteredJobs.length}</strong> {filteredJobs.length === 1 ? 'sample opportunity' : 'sample opportunities'}
+              <strong className="text-[#0F766E]">{filteredJobs.length}</strong> {t('work.results.count')}
             </span>
             {showSavedOnly && (
               <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#0F766E]/10 text-[#0F766E]">
-                Saved View
+                {t('work.job.savedJobsTitle')}
               </span>
             )}
           </div>
           <div className="text-[11px] text-slate-500 font-mono flex items-center gap-1.5">
             <Info className="w-3.5 h-3.5 text-slate-400" />
-            <span>Illustrative Sample Listings • Direct Agreement</span>
+            <span>{t('common.demoNotice')}</span>
           </div>
         </div>
 
@@ -454,7 +473,7 @@ export const WorkPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   className="p-6 rounded-2xl bg-white border border-[#E2E8F0] hover:border-[#0F766E]/60 hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer"
-                  onClick={() => setSelectedJob(job)}
+                  onClick={() => setSelectedJobId(job.id)}
                 >
                   <div>
                     {/* Top Meta: Trade & Bookmark */}
@@ -504,10 +523,10 @@ export const WorkPage: React.FC = () => {
                   <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between gap-3">
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-                        Offered Rate
+                        {t('common.rate')}
                       </div>
                       <div className="font-serif text-lg font-bold text-[#0F766E]">
-                        {job.payFormatted}
+                        ₹{job.payAmount.toLocaleString('en-IN')} / {t('common.day')}
                       </div>
                     </div>
 
@@ -515,7 +534,7 @@ export const WorkPage: React.FC = () => {
                       {isInterested ? (
                         <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#14B8A6]/20 text-[#0F766E] border border-[#14B8A6]/40 flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3 text-[#0F766E]" />
-                          Interested
+                          <span>{t('work.job.interestedDone')}</span>
                         </span>
                       ) : null}
 
@@ -523,12 +542,12 @@ export const WorkPage: React.FC = () => {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedJob(job);
+                          setSelectedJobId(job.id);
                         }}
                         className="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-[#0F766E] transition-colors duration-150 shadow-xs flex items-center gap-1.5"
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>View</span>
+                        <span>{t('work.job.viewDetails')}</span>
                       </button>
                     </div>
                   </div>
@@ -543,10 +562,10 @@ export const WorkPage: React.FC = () => {
               <Search className="w-7 h-7" />
             </div>
             <h3 className="font-serif text-2xl font-bold text-[#111827] mb-2">
-              No sample jobs match your filters
+              {t('work.results.emptyTitle')}
             </h3>
             <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-              Try choosing another trade category, switching city, or clearing your text search to view all sample opportunities.
+              {t('work.results.emptyDesc')}
             </p>
             <button
               type="button"
@@ -554,7 +573,7 @@ export const WorkPage: React.FC = () => {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F766E] text-white text-xs sm:text-sm font-semibold hover:bg-[#115E59] transition-colors shadow-xs"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Reset All Filters</span>
+              <span>{t('work.results.resetBtn')}</span>
             </button>
           </div>
         )}
@@ -565,10 +584,10 @@ export const WorkPage: React.FC = () => {
             <ShieldCheck className="w-5 h-5 text-[#0F766E] shrink-0 mt-0.5" />
             <div>
               <span className="font-bold text-[#111827] block mb-0.5">
-                Worker Safety &amp; Fair Agreement Reminder
+                {t('work.safety.title')}
               </span>
               <span>
-                Always confirm the offered wage rate, daily work hours, required tools, and daily payment schedule directly with the employer before starting any job.
+                {t('work.safety.desc')}
               </span>
             </div>
           </div>
@@ -576,7 +595,7 @@ export const WorkPage: React.FC = () => {
             to="/support"
             className="text-xs font-semibold text-[#0F766E] hover:underline shrink-0"
           >
-            Review Wage Guidelines →
+            {t('work.safety.link')} →
           </Link>
         </div>
 
@@ -594,7 +613,7 @@ export const WorkPage: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setSelectedJob(null)}
+              onClick={() => setSelectedJobId(null)}
               className="fixed inset-0 bg-[#111827]/75 backdrop-blur-xs cursor-pointer"
               aria-hidden="true"
             />
@@ -618,7 +637,7 @@ export const WorkPage: React.FC = () => {
                       {selectedJob.tradeLabel}
                     </span>
                     <span className="text-[11px] font-mono text-slate-500">
-                      ID: {selectedJob.id} • Sample Listing
+                      ID: {selectedJob.id} • {t('common.demoNotice')}
                     </span>
                   </div>
                   <h2 id="modal-job-title" className="font-serif text-2xl sm:text-3xl font-bold text-[#111827] leading-snug">
@@ -628,9 +647,9 @@ export const WorkPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setSelectedJob(null)}
+                  onClick={() => setSelectedJobId(null)}
                   className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/80 transition-colors"
-                  aria-label="Close details dialog"
+                  aria-label="Close dialog"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -642,15 +661,15 @@ export const WorkPage: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">
-                      Offered Pay
+                      {t('common.rate')}
                     </div>
                     <div className="text-xl font-bold font-serif text-[#0F766E]">
-                      {selectedJob.payFormatted}
+                      ₹{selectedJob.payAmount.toLocaleString('en-IN')} / {t('common.day')}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">
-                      Duration
+                      {t('work.filters.duration')}
                     </div>
                     <div className="text-sm font-semibold text-slate-900 flex items-center gap-1 mt-0.5">
                       <Calendar className="w-3.5 h-3.5 text-slate-500" />
@@ -659,7 +678,7 @@ export const WorkPage: React.FC = () => {
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">
-                      Site Locality
+                      {t('common.location')}
                     </div>
                     <div className="text-sm font-semibold text-slate-900 flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3.5 h-3.5 text-[#0F766E]" />
@@ -673,14 +692,14 @@ export const WorkPage: React.FC = () => {
                   <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
                     <div className="font-semibold text-slate-900 mb-1 flex items-center gap-1.5">
                       <Clock className="w-4 h-4 text-slate-500" />
-                      Daily Hours
+                      {t('work.job.hours')}
                     </div>
                     <div className="text-slate-600">{selectedJob.hours}</div>
                   </div>
                   <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
                     <div className="font-semibold text-slate-900 mb-1 flex items-center gap-1.5">
                       <Banknote className="w-4 h-4 text-[#0F766E]" />
-                      Payment Schedule
+                      {t('work.job.payment')}
                     </div>
                     <div className="text-slate-600">{selectedJob.paymentTiming}</div>
                   </div>
@@ -689,7 +708,7 @@ export const WorkPage: React.FC = () => {
                 {/* Work Description */}
                 <div>
                   <h4 className="font-serif font-bold text-base text-slate-900 mb-2">
-                    Work Description
+                    {language === 'hi' ? 'काम का विवरण' : 'Work Description'}
                   </h4>
                   <p className="text-slate-600 leading-relaxed text-sm">
                     {selectedJob.description}
@@ -699,7 +718,7 @@ export const WorkPage: React.FC = () => {
                 {/* Key Responsibilities */}
                 <div>
                   <h4 className="font-serif font-bold text-base text-slate-900 mb-2">
-                    Key Tasks &amp; Requirements
+                    {t('work.job.responsibilities')}
                   </h4>
                   <ul className="space-y-1.5 text-sm text-slate-600">
                     {selectedJob.responsibilities.map((task, idx) => (
@@ -714,14 +733,14 @@ export const WorkPage: React.FC = () => {
                 {/* Tools Info & Demonstration Employer Badge */}
                 <div className="p-4 rounded-xl bg-slate-100/90 border border-slate-200 text-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Tools / Materials:</span>
+                    <span className="text-slate-500">{language === 'hi' ? 'औज़ार / सामान:' : 'Tools / Materials:'}</span>
                     <span className="font-semibold text-slate-900 flex items-center gap-1">
                       <Wrench className="w-3.5 h-3.5 text-slate-600" />
-                      {selectedJob.toolsProvided ? 'Provided on site' : 'Worker brings basic trade tools'}
+                      {selectedJob.toolsProvided ? t('work.job.toolsProvided') : t('work.job.toolsNotProvided')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-200">
-                    <span className="text-slate-500">Contact / Poster:</span>
+                    <span className="text-slate-500">{t('work.job.employer')}:</span>
                     <span className="font-semibold text-slate-900 flex items-center gap-1">
                       <Users className="w-3.5 h-3.5 text-slate-600" />
                       {selectedJob.employerName} ({selectedJob.employerType})
@@ -735,29 +754,28 @@ export const WorkPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="font-bold text-xs text-amber-900 flex items-center gap-1.5">
                         <AlertTriangle className="w-4 h-4 text-amber-600" />
-                        Report this Listing
+                        {t('work.job.report')}
                       </div>
                       <button
                         type="button"
                         onClick={() => setIsReporting(false)}
                         className="text-xs text-slate-500 hover:text-slate-700"
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                     </div>
 
                     <label className="block text-xs text-slate-700 font-medium">
-                      Select reason:
+                      {t('work.job.reportReason')}:
                       <select
                         value={reportReason}
                         onChange={(e) => setReportReason(e.target.value)}
                         className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#0F766E]"
                       >
-                        <option>Inaccurate pay rate</option>
-                        <option>Incorrect hours or locality</option>
-                        <option>Suspicious or unresponsive listing</option>
-                        <option>Safety concerns</option>
-                        <option>Other</option>
+                        <option value="work.job.reportReason1">{t('work.job.reportReason1')}</option>
+                        <option value="work.job.reportReason2">{t('work.job.reportReason2')}</option>
+                        <option value="work.job.reportReason3">{t('work.job.reportReason3')}</option>
+                        <option value="work.job.reportReason4">{t('work.job.reportReason4')}</option>
                       </select>
                     </label>
 
@@ -766,7 +784,7 @@ export const WorkPage: React.FC = () => {
                       disabled={reportSubmitted}
                       className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors disabled:opacity-50"
                     >
-                      {reportSubmitted ? 'Report Submitted for Community Review' : 'Submit Report'}
+                      {reportSubmitted ? t('work.job.reportSuccess') : t('work.job.reportSubmit')}
                     </button>
                   </form>
                 ) : (
@@ -777,7 +795,7 @@ export const WorkPage: React.FC = () => {
                       className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-700 transition-colors"
                     >
                       <Flag className="w-3 h-3" />
-                      <span>Report listing issues</span>
+                      <span>{t('work.job.report')}</span>
                     </button>
                   </div>
                 )}
@@ -786,7 +804,7 @@ export const WorkPage: React.FC = () => {
               {/* Modal Footer / Action Buttons */}
               <div className="p-6 border-t border-[#E2E8F0] bg-slate-50/80 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="text-[11px] text-slate-500 text-center sm:text-left">
-                  Demo Action: Clicking records your interest locally.
+                  {t('common.demoNotice')}
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -798,12 +816,12 @@ export const WorkPage: React.FC = () => {
                     {savedJobIds.includes(selectedJob.id) ? (
                       <>
                         <BookmarkCheck className="w-4 h-4 text-[#0F766E]" />
-                        <span>Saved</span>
+                        <span>{t('work.job.saved')}</span>
                       </>
                     ) : (
                       <>
                         <Bookmark className="w-4 h-4" />
-                        <span>Save</span>
+                        <span>{t('work.job.save')}</span>
                       </>
                     )}
                   </button>
@@ -820,12 +838,12 @@ export const WorkPage: React.FC = () => {
                     {interestedJobIds.includes(selectedJob.id) ? (
                       <>
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>Interest Recorded</span>
+                        <span>{t('work.job.interestedDone')}</span>
                       </>
                     ) : (
                       <>
                         <Briefcase className="w-4 h-4" />
-                        <span>I&apos;m Interested</span>
+                        <span>{t('work.job.interested')}</span>
                       </>
                     )}
                   </button>
@@ -838,3 +856,5 @@ export const WorkPage: React.FC = () => {
     </div>
   );
 };
+
+export default WorkPage;

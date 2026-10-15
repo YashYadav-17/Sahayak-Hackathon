@@ -14,6 +14,7 @@ import {
   Award,
 } from 'lucide-react';
 import './SahayakScrollStory.css';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 // Register GSAP ScrollTrigger plugin safely
 gsap.registerPlugin(ScrollTrigger);
@@ -23,6 +24,7 @@ export interface SahayakScrollStoryProps {
 }
 
 export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud = false }) => {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const orbitalRef = useRef<SVGSVGElement | null>(null);
@@ -471,14 +473,14 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               ========================================================= */}
           <div ref={headlineRef} className="sss-headline-wrap">
             <span className="inline-block px-3.5 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 bg-[#E2E8F0]/70 text-[#0F766E] border border-[#CBD5E1]">
-              Artemis 2026 Initiative • India’s Fair Work Network
+              {t('home.hero.badge')}
             </span>
 
             <h1 ref={headline1Ref} className="sss-headline-1">
-              Skilled Hands.
+              {t('home.hero.title1')}
             </h1>
             <h2 ref={headline2Ref} className="sss-headline-2">
-              Deserve Better Work.
+              {t('home.hero.title2')}
             </h2>
 
             <div
@@ -486,7 +488,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               className="mt-6 inline-flex items-center gap-2 text-sm font-semibold tracking-wide uppercase text-[#0F766E]"
             >
               <Sparkles className="w-4 h-4 text-[#14B8A6]" />
-              <span>Direct Matching • Zero Middleman Commissions</span>
+              <span>{t('home.hero.sub')}</span>
             </div>
           </div>
 
@@ -496,10 +498,10 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
           <div ref={networkWrapRef} className="sss-network-wrap">
             <div className="text-center mb-8">
               <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#14B8A6] block mb-2">
-                WHERE SKILLS MEET OPPORTUNITY
+                {t('home.hero.scene3.badge')}
               </span>
               <h3 className="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Direct Local Connection
+                {t('home.hero.scene3.title')}
               </h3>
             </div>
 
@@ -508,24 +510,24 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div ref={workerNodeRef} className="sss-card-node text-left border-l-4 border-l-[#14B8A6]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-mono text-[#14B8A6] font-semibold uppercase tracking-wider">
-                    Artisan Case Study
+                    {t('home.hero.scene3.artisanBadge')}
                   </span>
                   <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#14B8A6]/20 text-[#14B8A6] border border-[#14B8A6]/30">
-                    Demonstration Profile
+                    {t('home.hero.scene3.demoBadge')}
                   </span>
                 </div>
                 <h4 className="font-serif text-xl font-bold text-white mb-1">
                   Rameshwar Jadhav
                 </h4>
                 <p className="text-xs text-[#DBEAFE]/80 mb-3">
-                  Master Mason &amp; Lime Plasterer • 12+ Years Experience
+                  {t('home.hero.scene3.artisanTrade')}
                 </p>
                 <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-700/80">
                   <span className="text-slate-400 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#14B8A6]" /> Kothrud, Pune
                   </span>
                   <span className="text-white font-mono font-semibold flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5 text-amber-400" /> 4.9 Rating (Sample Profile)
+                    <Award className="w-3.5 h-3.5 text-amber-400" /> 4.9 ({t('home.hero.scene3.demoBadge')})
                   </span>
                 </div>
               </div>
@@ -534,24 +536,24 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div ref={jobNodeRef} className="sss-card-node text-left border-l-4 border-l-[#8B5CF6]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-mono text-[#8B5CF6] font-semibold uppercase tracking-wider">
-                    Direct Local Requirement
+                    {t('home.hero.scene3.directBadge')}
                   </span>
                   <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30">
-                    Direct Payout
+                    {t('home.hero.scene3.payoutBadge')}
                   </span>
                 </div>
                 <h4 className="font-serif text-xl font-bold text-white mb-1">
-                  Heritage Villa Restoration
+                  {t('home.hero.scene3.jobTitle')}
                 </h4>
                 <p className="text-xs text-[#DBEAFE]/80 mb-3">
-                  Residential Site • 8 Days Requirement • Direct Contract
+                  {t('home.hero.scene3.jobDesc')}
                 </p>
                 <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-700/80">
                   <span className="text-slate-400 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#8B5CF6]" /> Kothrud Site (8.2 km)
+                    <MapPin className="w-3.5 h-3.5 text-[#8B5CF6]" /> Kothrud (8.2 km)
                   </span>
                   <span className="text-[#14B8A6] font-mono font-bold flex items-center gap-1">
-                    <Banknote className="w-3.5 h-3.5" /> ₹950 / Day Offered Rate
+                    <Banknote className="w-3.5 h-3.5" /> {t('home.hero.scene3.rateOffered')}
                   </span>
                 </div>
               </div>
@@ -561,7 +563,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
             <div ref={connectionPillRef} className="mt-6 flex justify-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0F766E]/40 border border-[#14B8A6]/60 text-white text-xs font-bold font-mono tracking-wider shadow-lg">
                 <CheckCircle2 className="w-4 h-4 text-[#14B8A6]" />
-                <span>DIRECT LOCAL CONTACT • ZERO BROKERAGE FEES</span>
+                <span>{t('home.hero.scene3.pill')}</span>
               </div>
             </div>
           </div>
@@ -575,45 +577,45 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-4 border-b border-[#E2E8F0]">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0F766E]/10 text-[#0F766E] text-xs font-bold tracking-wide uppercase">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#0F766E]" />
-                  Sample Direct Listing
+                  {t('home.hero.scene4.badge')}
                 </span>
                 <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                  SAMPLE SHOWCASE DATA
+                  {t('home.hero.scene4.sampleTag')}
                 </span>
               </div>
 
               {/* Job Title & Trade */}
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#111827] leading-snug mb-2">
-                Master Mason &amp; Heritage Plasterer
+                {t('home.hero.scene4.title')}
               </h3>
               <p className="text-sm text-[#334155] leading-relaxed mb-6">
-                Direct residential contract in Kothrud, Pune. Restoring exposed stone arches and lime plaster on a residential bungalow.
+                {t('home.hero.scene4.desc')}
               </p>
 
               {/* Key Opportunity Metrics Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Offered Day Rate
+                    {t('home.hero.scene4.rateLabel')}
                   </div>
                   <div className="text-lg font-bold font-serif text-[#0F766E]">
-                    ₹950 / Day
+                    ₹950 / {t('common.day')}
                   </div>
                 </div>
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Duration
+                    {t('home.hero.scene4.durationLabel')}
                   </div>
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-1 mt-0.5">
-                    <Calendar className="w-3.5 h-3.5 text-slate-600" /> 12 Days Fixed
+                    <Calendar className="w-3.5 h-3.5 text-slate-600" /> {t('home.hero.scene4.durationVal')}
                   </div>
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">
-                    Location
+                    {t('home.hero.scene4.locLabel')}
                   </div>
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5 text-[#0F766E]" /> Kothrud, Pune
+                    <MapPin className="w-3.5 h-3.5 text-[#0F766E]" /> {t('home.hero.scene4.locVal')}
                   </div>
                 </div>
               </div>
@@ -622,10 +624,10 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs text-slate-600">
                 <span className="flex items-center gap-1.5 font-medium">
                   <CheckCircle2 className="w-4 h-4 text-[#0F766E]" />
-                  Direct Payment Between Employer and Worker
+                  {t('home.hero.scene4.trust')}
                 </span>
                 <span className="font-mono text-[11px] text-slate-500">
-                  ID: SHY-DEMO-PUN-084 • Illustrative Sample Listing
+                  ID: SHY-DEMO-PUN-084 • {t('home.hero.scene4.sampleTag')}
                 </span>
               </div>
             </div>
@@ -636,16 +638,16 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
               ========================================================= */}
           <div ref={finalWrapRef} className="sss-final-wrap">
             <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#14B8A6] mb-3">
-              THE DIGNIFIED FUTURE OF WORK
+              {t('home.hero.scene5.badge')}
             </span>
 
             <h2 className="sss-final-headline">
-              <span>Less Waiting. </span>
-              <span className="text-[#14B8A6] block sm:inline">More Opportunity.</span>
+              <span>{t('home.hero.scene5.title1')}</span>
+              <span className="text-[#14B8A6] block sm:inline">{t('home.hero.scene5.title2')}</span>
             </h2>
 
             <p className="text-base sm:text-lg text-[#DBEAFE]/80 max-w-xl mx-auto mb-8 leading-relaxed">
-              Sahayak bridges skilled informal workers directly with trustworthy local work. No commission skimming. No agent gatekeepers. Pure dignity.
+              {t('home.hero.scene5.desc')}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
@@ -653,7 +655,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                 to="/work"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-[#0F766E] text-white text-base font-semibold shadow-lg hover:bg-[#115E59] active:scale-[0.98] transition-all group"
               >
-                <span>Find Work</span>
+                <span>{t('home.hero.scene5.btnFind')}</span>
                 <ArrowRight className="w-5 h-5 text-[#14B8A6] group-hover:translate-x-1 transition-transform" />
               </Link>
 
@@ -661,7 +663,7 @@ export const SahayakScrollStory: React.FC<SahayakScrollStoryProps> = ({ showHud 
                 to="/hire"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-[#1E293B] text-white border border-slate-700 text-base font-semibold hover:bg-slate-800 active:scale-[0.98] transition-all group"
               >
-                <span>Hire a Worker</span>
+                <span>{t('home.hero.scene5.btnHire')}</span>
                 <Users className="w-5 h-5 text-[#8B5CF6] group-hover:scale-110 transition-transform" />
               </Link>
             </div>

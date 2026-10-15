@@ -9,24 +9,28 @@ import { SupportPage } from './pages/SupportPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { MotionLabPage } from './pages/MotionLabPage';
 
+import { LanguageProvider } from './i18n/LanguageContext';
+
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Isolated Development-Only Motion Lab Route */}
-        <Route path="/motion-lab" element={<MotionLabPage />} />
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Isolated Development-Only Motion Lab Route */}
+          <Route path="/motion-lab" element={<MotionLabPage />} />
 
-        {/* Existing Application Shell & Routes */}
-        <Route path="/" element={<PageLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="work" element={<WorkPage />} />
-          <Route path="hire" element={<HirePage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="support" element={<SupportPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          {/* Existing Application Shell & Routes */}
+          <Route path="/" element={<PageLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="work" element={<WorkPage />} />
+            <Route path="hire" element={<HirePage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="support" element={<SupportPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 };
 

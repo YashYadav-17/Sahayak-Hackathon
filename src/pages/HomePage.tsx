@@ -13,8 +13,11 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { SahayakScrollStory } from '../components/animation/SahayakScrollStory';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const HomePage: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full">
       {/* 1. CINEMATIC SCROLL STORY (HERO EXPERIENCE) */}
@@ -37,7 +40,7 @@ export const HomePage: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-[#14B8A6] text-xs font-mono font-semibold mb-4 border border-slate-700"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>SIMPLE, DIRECT WORKFLOW</span>
+                <span>{t('home.workflow.badge')}</span>
               </motion.span>
               <motion.h2
                 initial={{ opacity: 0, y: 12 }}
@@ -46,7 +49,7 @@ export const HomePage: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.08 }}
                 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight"
               >
-                Three Simple Steps to Fair Work
+                {t('home.workflow.title')}
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 12 }}
@@ -55,7 +58,7 @@ export const HomePage: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.16 }}
                 className="mt-3.5 text-slate-400 text-base sm:text-lg leading-relaxed"
               >
-                Direct connections with transparent pay and zero middleman commissions.
+                {t('home.workflow.subtitle')}
               </motion.p>
             </div>
 
@@ -78,10 +81,10 @@ export const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <h3 className="font-serif text-xl font-bold text-white mb-2">
-                    Find a job
+                    {t('home.workflow.step1.title')}
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed">
-                    Search open daily wage or contract work near you. Filter by your trade—masonry, carpentry, painting, plumbing, or electrical.
+                    {t('home.workflow.step1.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -104,10 +107,10 @@ export const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <h3 className="font-serif text-xl font-bold text-white mb-2">
-                    Check the pay and hours
+                    {t('home.workflow.step2.title')}
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed">
-                    See the offered day rate, work duration, and exact site location clearly before committing. Clear terms with zero hidden fees.
+                    {t('home.workflow.step2.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -130,10 +133,10 @@ export const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <h3 className="font-serif text-xl font-bold text-white mb-2">
-                    Contact the person hiring
+                    {t('home.workflow.step3.title')}
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed">
-                    Call or message the employer directly to confirm details. Get paid directly upon completing the shift or contract.
+                    {t('home.workflow.step3.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -155,10 +158,10 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div>
                   <div className="font-serif font-bold text-lg text-white">
-                    Zero Commission Deductions
+                    {t('home.principles.card1.title')}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                    Workers keep 100% of their earnings. Employers pay the agreed wage directly to the worker.
+                    {t('home.principles.card1.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -175,10 +178,10 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div>
                   <div className="font-serif font-bold text-lg text-white">
-                    Clear Daily Wage Standards
+                    {t('home.principles.card2.title')}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                    Transparent wage benchmarks anchored to statutory trade rates and actual skill proficiencies.
+                    {t('home.principles.card2.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -195,10 +198,10 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div>
                   <div className="font-serif font-bold text-lg text-white">
-                    Direct Communication
+                    {t('home.principles.card3.title')}
                   </div>
                   <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                    Speak directly with the homeowner or contractor. No agency gatekeepers filtering your calls.
+                    {t('home.principles.card3.desc')}
                   </p>
                 </div>
               </motion.div>
@@ -217,26 +220,43 @@ export const HomePage: React.FC = () => {
               <div className="relative z-10 max-w-3xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F766E]/30 text-[#14B8A6] border border-[#0F766E]/40 text-xs font-semibold mb-6">
                   <Quote className="w-3.5 h-3.5 text-[#14B8A6]" />
-                  <span>Illustrative Artisan Case Study</span>
+                  <span>{t('home.caseStudy.badge')}</span>
                 </div>
 
                 <blockquote className="font-serif text-xl sm:text-2xl lg:text-3xl font-medium leading-relaxed text-[#F8FAFC]">
-                  “When workers and homeowners speak directly, there is mutual respect. Terms are agreed before work starts, and the entire wage goes straight to the craftsperson without agency deductions.”
+                  {t('home.caseStudy.quote')}
                 </blockquote>
 
-                <div className="mt-8 flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-[#0F766E] text-white font-bold flex items-center justify-center font-serif text-lg shadow-sm border border-[#14B8A6]">
-                    रा
-                  </div>
-                  <div>
-                    <div className="font-bold text-base text-white flex items-center gap-2">
-                      <span>Rameshwar Jadhav</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#14B8A6]/20 text-[#14B8A6] border border-[#14B8A6]/30">
-                        Demonstration Profile
-                      </span>
+                <div className="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-6 border-t border-slate-800">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-full bg-[#0F766E] text-white font-bold flex items-center justify-center font-serif text-lg shadow-sm border border-[#14B8A6]">
+                      रा
                     </div>
-                    <div className="text-xs text-slate-400 mt-0.5">
-                      Master Mason &amp; Lime Plasterer • Kothrud, Pune
+                    <div>
+                      <div className="font-bold text-base text-white flex items-center gap-2">
+                        <span>Rameshwar Jadhav</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#14B8A6]/20 text-[#14B8A6] border border-[#14B8A6]/30">
+                          {t('home.hero.scene3.demoBadge')}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {t('home.hero.scene3.artisanTrade')}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-6 text-xs text-slate-400 font-mono">
+                    <div>
+                      <div className="text-[#14B8A6] font-bold text-sm sm:text-base">{t('home.caseStudy.stat1')}</div>
+                      <div>{t('home.caseStudy.stat1Label')}</div>
+                    </div>
+                    <div>
+                      <div className="text-white font-bold text-sm sm:text-base">{t('home.caseStudy.stat2')}</div>
+                      <div>{t('home.caseStudy.stat2Label')}</div>
+                    </div>
+                    <div>
+                      <div className="text-[#8B5CF6] font-bold text-sm sm:text-base">{t('home.caseStudy.stat3')}</div>
+                      <div>{t('home.caseStudy.stat3Label')}</div>
                     </div>
                   </div>
                 </div>
@@ -258,9 +278,9 @@ export const HomePage: React.FC = () => {
                   <LifeBuoy className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-base text-white">Worker Rights &amp; Benchmark Guidance</h4>
+                  <h4 className="font-bold text-base text-white">{t('home.supportBanner.title')}</h4>
                   <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                    Explore statutory trade rates, dispute mediation principles, and safety recommendations.
+                    {t('home.supportBanner.desc')}
                   </p>
                 </div>
               </div>
@@ -270,7 +290,7 @@ export const HomePage: React.FC = () => {
                   to="/support"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold border border-slate-700 transition-colors duration-150 shadow-xs"
                 >
-                  <span>Find Worker Support</span>
+                  <span>{t('home.supportBanner.btn')}</span>
                   <ArrowRight className="w-4 h-4 text-[#14B8A6]" />
                 </Link>
               </div>
