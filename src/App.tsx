@@ -7,11 +7,16 @@ import { HirePage } from './pages/HirePage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SupportPage } from './pages/SupportPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { MotionLabPage } from './pages/MotionLabPage';
 
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Isolated Development-Only Motion Lab Route */}
+        <Route path="/motion-lab" element={<MotionLabPage />} />
+
+        {/* Existing Application Shell & Routes */}
         <Route path="/" element={<PageLayout />}>
           <Route index element={<HomePage />} />
           <Route path="work" element={<WorkPage />} />

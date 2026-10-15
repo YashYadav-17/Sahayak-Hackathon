@@ -1,0 +1,267 @@
+/* Sahayak Cinematic Scroll Story Styles */
+/* Palette:
+   Deep Ink: #111827
+   Slate: #334155
+   Soft Canvas: #F8FAFC
+   Pure White: #FFFFFF
+   Primary Teal: #0F766E
+   Bright Teal: #14B8A6
+   Mist Blue: #DBEAFE
+   Soft Violet: #8B5CF6
+   Border Neutral: #E2E8F0
+*/
+
+:root {
+  --sss-deep-ink: #111827;
+  --sss-slate: #334155;
+  --sss-soft-canvas: #F8FAFC;
+  --sss-pure-white: #FFFFFF;
+  --sss-primary-teal: #0F766E;
+  --sss-bright-teal: #14B8A6;
+  --sss-mist-blue: #DBEAFE;
+  --sss-soft-violet: #8B5CF6;
+  --sss-border-neutral: #E2E8F0;
+}
+
+.sss-container {
+  position: relative;
+  width: 100%;
+  background-color: var(--sss-soft-canvas);
+  color: var(--sss-deep-ink);
+  overflow: hidden;
+  will-change: background-color, color;
+}
+
+.sss-viewport {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Orbital Radar SVG Background Geometry */
+.sss-orbital-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sss-orbital-svg {
+  width: min(92vw, 840px);
+  height: min(92vw, 840px);
+  overflow: visible;
+}
+
+.sss-ring-dash {
+  stroke-dasharray: 6 6;
+  transform-origin: center;
+}
+
+.sss-ring-outer {
+  stroke-dasharray: 2 12;
+  transform-origin: center;
+}
+
+/* Layering */
+.sss-content-layer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Dynamic Text Overlays */
+.sss-headline-wrap {
+  position: absolute;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 1rem;
+  text-align: center;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.sss-headline-1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.sss-headline-2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0.25rem 0 0;
+  text-transform: uppercase;
+  color: var(--sss-primary-teal);
+}
+
+/* Node Network Elements in Scene 3 */
+.sss-network-wrap {
+  position: absolute;
+  width: 100%;
+  max-width: 900px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 12;
+  will-change: transform, opacity;
+}
+
+.sss-card-node {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.75rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+/* Featured Opportunity Card (Scene 4) */
+.sss-job-card-wrap {
+  position: absolute;
+  width: 100%;
+  max-width: 580px;
+  padding: 0 1rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  will-change: transform, opacity;
+}
+
+.sss-job-card {
+  background: var(--sss-pure-white);
+  color: var(--sss-deep-ink);
+  border-radius: 1.75rem;
+  border: 1px solid var(--sss-border-neutral);
+  padding: 2.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Final Statement & CTA (Scene 5) */
+.sss-final-wrap {
+  position: absolute;
+  width: 100%;
+  max-width: 860px;
+  padding: 0 1rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+.sss-final-headline {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.25rem, 5.5vw, 4.75rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--sss-pure-white);
+  margin-bottom: 2rem;
+}
+
+/* Progress HUD indicator */
+.sss-hud-bar {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  border-radius: 9999px;
+  z-index: 30;
+  font-size: 0.75rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: 0.05em;
+  color: var(--sss-mist-blue);
+  pointer-events: none;
+}
+
+.sss-hud-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sss-bright-teal);
+  box-shadow: 0 0 8px var(--sss-bright-teal);
+}
+
+/* Mobile (< 768px) Fluid Flow */
+@media (max-width: 767px) {
+  .sss-viewport {
+    height: auto !important;
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    overflow: visible !important;
+  }
+  .sss-content-layer {
+    padding: 1rem 0;
+    gap: 2.5rem;
+  }
+  .sss-headline-wrap,
+  .sss-network-wrap,
+  .sss-job-card-wrap,
+  .sss-final-wrap {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Reduced Motion Fallback */
+@media (prefers-reduced-motion: reduce) {
+  .sss-viewport {
+    height: auto !important;
+    min-height: 100vh;
+    padding: 4rem 1rem;
+  }
+  .sss-headline-wrap,
+  .sss-network-wrap,
+  .sss-job-card-wrap,
+  .sss-final-wrap {
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    margin-bottom: 3rem;
+  }
+}
+
